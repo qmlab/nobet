@@ -55,10 +55,10 @@ var Record = React.createClass({
     var ROI = this.props.data.ROI
     return (
       <div className='Record'>
-        <h2>{betItem.Teams[0]} vs {betItem.Teams[1]} @ {betItem.MatchDate} by {betItem.BookMaker}</h2>
+        <h2>{betItem.Teams[0].Name.replace(/_/g, ' ')} vs {betItem.Teams[1].Name.replace(/_/g, ' ')} @ {betItem.MatchDate} by {betItem.BookMaker}</h2>
         <p>Odds : {betItem.Odds.Win}/{betItem.Odds.Draw}/{betItem.Odds.Lose}</p>
         <p>Decision: {decision}</p>
-        <p>ROI: {ROI}</p>
+        <p>ROI: {toPercent(ROI)}</p>
       </div>
     )
   }
