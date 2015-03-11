@@ -51,7 +51,6 @@ app.route('/records')
 .get(function(req, res) {
   var username = nconf.get('apikey')
   var password = nconf.get('password')
-  var hash = util.makeBaseAuth(username, password)
   var options = {
     hostname: 'backpack.ddns.net',
     port: 443,
