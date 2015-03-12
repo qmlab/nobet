@@ -34,7 +34,7 @@ var SearchBox = React.createClass({
     e.preventDefault()
     var text = this.refs.searchText.getDOMNode().value
     var queries = text.split().map(function(query) {
-      return '{"BetItem.Teams.Name":{"$regex": "' + query + '", "$options": "imsx"}}'
+      return '{"BetItem.Teams.Name":{"$regex": "' + query + '"}}'
     })
     var combinedQuery = '{"$or": ['
     var count = 0
@@ -52,7 +52,7 @@ var SearchBox = React.createClass({
     return (
       <div className='SearchBox'>
         <form className='SearchBoxForm' onSubmit={this.handleSubmit}>
-          <input type='text' className='SearchText' maxlength='128' ref='searchText' />
+          <input type='text' className='SearchText' maxLength='128' ref='searchText' />
           <input type='submit' className='SubmitSearch' value='Search' />
         </form>
       </div>
