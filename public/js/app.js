@@ -52,8 +52,13 @@ var SearchBox = React.createClass({
     return (
       <div className='SearchBox'>
         <form className='SearchBoxForm' onSubmit={this.handleSubmit}>
-          <input type='text' className='SearchText form-control' placeholder='search all' maxLength='128' ref='searchText' />
-          <input type='submit' className='SubmitSearch' value='Search' />
+          <label className='aria-lable'>What to search?</label>
+          <div className="input-group input-group-lg">
+            <input type='text' className='SearchText form-control' placeholder='search all' maxLength='128' ref='searchText' />
+            <span className='input-group-btn'>
+              <button className='btn btn-default' type='button'>Search</button>
+            </span>
+          </div>
         </form>
       </div>
     )

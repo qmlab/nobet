@@ -523,10 +523,11 @@ body {
 
 .SearchBox {
   position: fixed;
+  width: 60vw;
 }
 
 .RecordList {
-  margin-top: 5vh;
+  margin-top: 75px;
   display: inline-block;
   overflow-y: scroll;
   height: 85vh;

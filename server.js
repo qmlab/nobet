@@ -64,7 +64,8 @@ app.route('/records')
     method: 'POST',
     auth: username + ':' + password,
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Keep-Alive': false
     }
   }
 
