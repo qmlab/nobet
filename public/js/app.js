@@ -34,7 +34,7 @@ var SearchBox = React.createClass({
     e.preventDefault()
     var text = this.refs.searchText.getDOMNode().value
     var queries = text.split().map(function(query) {
-      return '{"BetItem.Teams.Name":{"$regex": "' + query + '"}}'
+      return '{"BetItem.Teams.Name":{"$regex": "' + query + '", "$options": "imsx"}}'
     })
     var combinedQuery = '{"$or": ['
     var count = 0
