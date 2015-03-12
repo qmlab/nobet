@@ -7,7 +7,14 @@ var express = require('express')
 , compress = require('compression')
 , http = require('http')
 , https = require('https')
+, bodyParser = require('body-parser')
 , util = require('./lib/util.js')
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
 
 // First consider commandline arguments and environment variables, respectively.
 nconf.argv().env();
@@ -44,18 +51,17 @@ app.get('/', function(req, res) {
   res.render('index.jade')
 })
 
-
 // Proxy
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 app.route('/records')
-.get(function(req, res) {
+.post(function(req, res, next) {
   var username = nconf.get('apikey')
   var password = nconf.get('password')
   var options = {
     hostname: 'backpack.ddns.net',
     port: 443,
     path: '/store/set/goodbet/items',
-    method: 'GET',
+    method: 'POST',
     auth: username + ':' + password,
     headers: {
       'Content-Type': 'application/json'
@@ -66,6 +72,7 @@ app.route('/records')
     _res.setEncoding('utf8')
     _res.on('data', function(data) {
       res.write(data)
+      next()
     })
     _res.on('close', function() {
       res.status(_res.statusCode).end()
@@ -75,9 +82,14 @@ app.route('/records')
     })
   }).on('error', function(e) {
     res.writeHead(500)
+    console.error(e.message)
     res.end()
   })
 
+  var query = Object.keys(req.body)[0]
+  if (typeof query !== 'undefined') {
+    _req.write(query)
+  }
   _req.end()
 })
 

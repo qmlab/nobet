@@ -1,10 +1,9 @@
 var Page = React.createClass({
-  getInitialState: function() {
-    return {data: []}
-  },
-  componentDidMount: function() {
+  search: function(query) {
     $.ajax({
       url: this.props.url,
+      type: 'POST',
+      data: query,
       dataType: 'json',
       success: function(data) {
         this.setState({data: data})
@@ -14,10 +13,16 @@ var Page = React.createClass({
       }.bind(this)
     })
   },
+  getInitialState: function() {
+    return {data: []}
+  },
+  componentDidMount: function() {
+    this.search({})
+  },
   render: function() {
     return (
       <div className='Page'>
-        <SearchBox />
+        <SearchBox onSubmit={this.search}/>
         <RecordList data={this.state.data} />
       </div>
     )
@@ -25,9 +30,31 @@ var Page = React.createClass({
 })
 
 var SearchBox = React.createClass({
+  handleSubmit: function(e) {
+    e.preventDefault()
+    var text = this.refs.searchText.getDOMNode().value
+    var queries = text.split().map(function(query) {
+      return '{"BetItem.Teams.Name":{"$regex": "' + query + '"}}'
+    })
+    var combinedQuery = '{"$or": ['
+    var count = 0
+    queries.forEach(function(query) {
+      if (count > 0) {
+        combinedQuery += ','
+      }
+      combinedQuery += query
+      count++
+    })
+    combinedQuery += ']}'
+    this.props.onSubmit(combinedQuery)
+  },
   render: function() {
     return (
       <div className='SearchBox'>
+        <form className='SearchBoxForm' onSubmit={this.handleSubmit}>
+          <input type='text' className='SearchText' maxlength='128' ref='searchText' />
+          <input type='submit' className='SubmitSearch' value='Search' />
+        </form>
       </div>
     )
   }
@@ -42,7 +69,7 @@ var RecordList = React.createClass({
     })
     return (
       <div className='RecordList'>
-      {recordNodes}
+        {recordNodes}
       </div>
     )
   }
