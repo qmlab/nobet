@@ -510,3 +510,24 @@ ul {
 .scrollArrow.downArrow:hover i {
     top: 21px;
 }
+
+
+
+body {
+  overflow: hidden;
+}
+
+#container {
+  padding-top: 65px;
+}
+
+.SearchBox {
+  position: fixed;
+}
+
+.RecordList {
+  margin-top: 5vh;
+  display: inline-block;
+  overflow-y: scroll;
+  height: 85vh;
+}
