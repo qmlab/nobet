@@ -531,4 +531,5 @@ body {
   display: inline-block;
   overflow-y: scroll;
   height: 85vh;
+  width: 100%;
 }
