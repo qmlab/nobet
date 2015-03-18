@@ -85,12 +85,17 @@ var Record = React.createClass({
     var betItem = this.props.data.BetItem
     var decision = this.props.data.Decision
     var ROI = this.props.data.ROI
+    var result = 'N/A'
+    if (typeof this.props.data.BetItem.Result != 'undefined') {
+      result = this.props.data.BetItem.Result
+    }
     return (
       <div className='Record'>
         <h2>{betItem.Teams[0].Name.replace(/_/g, ' ')} vs {betItem.Teams[1].Name.replace(/_/g, ' ')} @ {betItem.MatchDate} by {betItem.BookMaker}</h2>
-        <p>Odds : {betItem.Odds.Win}/{betItem.Odds.Draw}/{betItem.Odds.Lose}</p>
-        <p>Decision: {decision}</p>
+        <p>Odds : {betItem.Odds.Win} / {betItem.Odds.Draw} / {betItem.Odds.Lose}</p>
+        <p>Decision: <b>{decision}</b></p>
         <p>ROI: {toPercent(ROI)}</p>
+        <p>Result: <b>{result}</b></p>
       </div>
     )
   }
