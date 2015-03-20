@@ -60,7 +60,7 @@ app.route('/records')
   var options = {
     hostname: 'backpack.ddns.net',
     port: 443,
-    path: '/store/set/goodbet/items',
+    path: '/store/set/goodbet/items?orderby=BetItem.MatchDate&desc=1',
     method: 'POST',
     auth: username + ':' + password,
     headers: {

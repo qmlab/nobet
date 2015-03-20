@@ -527,7 +527,7 @@ body {
 }
 
 .RecordList {
-  margin-top: 75px;
+  margin-top: 100px;
   display: inline-block;
   overflow-y: scroll;
   height: 85vh;

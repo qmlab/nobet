@@ -30,6 +30,12 @@ var Page = React.createClass({
 })
 
 var SearchBox = React.createClass({
+  getInitialState: function() {
+    return { isChecked: false }
+  },
+  onCheckedChange: function() {
+    this.setState({ isChecked: !this.state.isChecked })
+  },
   handleSubmit: function(e) {
     e.preventDefault()
     var text = this.refs.searchText.getDOMNode().value
@@ -46,6 +52,9 @@ var SearchBox = React.createClass({
       count++
     })
     combinedQuery += ']}'
+    if (this.state.isChecked) {
+      combinedQuery = '{"$and":[' + combinedQuery + ', {"$or":[{"BetItem.Result":{"$exists":false}}, {"BetItem.Result":"Unknown"}]}]}'
+    }
     this.props.onSubmit(combinedQuery)
   },
   render: function() {
@@ -58,6 +67,11 @@ var SearchBox = React.createClass({
             <span className='input-group-btn'>
               <button className='btn btn-default' type='button'>Search</button>
             </span>
+          </div>
+          <div className='checkbox'>
+            <label>
+              <input type='checkbox' ref='showFutureOnly' checked={this.state.isChecked} onChange={this.onCheckedChange}> Future Only</input>
+            </label>
           </div>
         </form>
       </div>
