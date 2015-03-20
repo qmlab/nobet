@@ -114,9 +114,9 @@ var Record = React.createClass({
         <p>Odds : {betItem.Odds.Win} / {betItem.Odds.Draw} / {betItem.Odds.Lose}</p>
         <p>Odds Date: {localOddsTime}</p>
         <p>Bookmaker: {betItem.BookMaker}</p>
-        <p>Decision: <b>{decision}</b></p>
-        <p>ROI: {toPercent(ROI)}</p>
-        <p>Result: <b>{result}</b></p>
+        <p>Smart Choice: <b>{decision}</b></p>
+        <p>Predicted ROI: {toPercent(ROI)}</p>
+        <p>Actual Result: <b>{result}</b></p>
       </div>
     )
   }
