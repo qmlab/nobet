@@ -58,7 +58,7 @@ var SearchBox = React.createClass({
     this.props.onSubmit(combinedQuery)
   },
   getInitialState: function() {
-    return { isChecked: false }
+    return { isChecked: true }
   },
   render: function() {
     return (
