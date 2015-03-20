@@ -30,14 +30,14 @@ var Page = React.createClass({
 })
 
 var SearchBox = React.createClass({
-  getInitialState: function() {
-    return { isChecked: false }
-  },
   onCheckedChange: function() {
-    this.setState({ isChecked: !this.state.isChecked })
+    var isChecked = !this.state.isChecked
+    this.setState({ isChecked: isChecked })
   },
-  handleSubmit: function(e) {
-    e.preventDefault()
+  handleSubmit: function(e, isChecked) {
+    if (!!e) {
+      e.preventDefault()
+    }
     var text = this.refs.searchText.getDOMNode().value
     var queries = text.split(/[ \t]+/).map(function(query) {
       return '{"BetItem.Teams.Name":{"$regex": "' + query + '", "$options" : "imsx"}}'
@@ -57,15 +57,18 @@ var SearchBox = React.createClass({
     }
     this.props.onSubmit(combinedQuery)
   },
+  getInitialState: function() {
+    return { isChecked: false }
+  },
   render: function() {
     return (
       <div className='SearchBox'>
         <form className='SearchBoxForm' onSubmit={this.handleSubmit}>
-          <label className='aria-lable'>What to search?</label>
+          <label className='aria-label'>What to search?</label>
           <div className="input-group input-group-lg">
             <input type='text' className='SearchText form-control' placeholder='search all' maxLength='128' ref='searchText' />
             <span className='input-group-btn'>
-              <button className='btn btn-default' type='button'>Search</button>
+              <button className='btn btn-default' type='button' onClick={this.handleSubmit}>Search</button>
             </span>
           </div>
           <div className='checkbox'>
