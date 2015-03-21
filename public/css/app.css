@@ -530,6 +530,8 @@ body {
   margin-top: 100px;
   display: inline-block;
   overflow-y: scroll;
-  height: 75vh;
   width: 100%;
+  position: absolute;
+  top: 8%;
+  bottom: 5%;
 }
