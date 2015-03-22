@@ -89,7 +89,7 @@ var SearchBox = React.createClass({
   getInitialState: function() {
     return {
       isChecked: false,
-      isSortedByDate: true,
+      isSortedByDate: false,
       isSortedByROI: false
       }
   },
