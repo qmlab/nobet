@@ -8,23 +8,10 @@ html
     link(href='css/bootstrap.min.css', rel='stylesheet')
     link(href='css/app.css', rel='stylesheet')
   body
-    .navbar.navbar-fixed-top.navbar-default
-      .navbar-header
-        //img#pageLogo(src='/favicon-32.png', alt="'Origami Colored Pencil Icons' by Double-J Design. CC Attribution 4.0. http://www.doublejdesign.co.uk", title="'Origami Colored Pencil Icons' by Double-J Design. CC Attribution 4.0. http://www.doublejdesign.co.uk")
-        a.navbar-brand NoBet
-        button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='.navbar-collapse')
-          span.icon-bar
-          span.icon-bar
-      .container.navbarContainer
-        .navbar-collapse.collapse
-          ul.nav.navbar-nav.navbar-right
-            li
-              a#about.navbarItem(href='javascript:void(0);') About
-            li
-              a#quit.navbarItem(href='javascript:void(0);') Quit
     #container
     script(src='http://code.jquery.com/jquery-1.10.0.min.js')
-    script(src='http://fb.me/react-0.12.2.js')
+    script(src='http://fb.me/react-0.13.1.js')
     script(src='http://fb.me/JSXTransformer-0.12.2.js')
     script(src='js/common.js')
+    script(src='js/react-bootstrap.min.js')
     script(type='text/jsx' src='js/app.js')

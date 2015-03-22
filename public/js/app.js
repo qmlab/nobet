@@ -28,6 +28,7 @@ var Page = React.createClass({
   render: function() {
     return (
       <div className='Page'>
+        <NoBetNavbar />
         <SearchBox onSubmit={this.search}/>
         <RecordList data={this.state.data} />
       </div>
@@ -159,6 +160,26 @@ var Record = React.createClass({
         <p>Predicted ROI: {toPercent(ROI)}</p>
         <p>Actual Result: <b>{result}</b></p>
       </div>
+    )
+  }
+})
+
+var Navbar = ReactBootstrap.Navbar
+var Nav = ReactBootstrap.Nav
+var NavItem = ReactBootstrap.NavItem
+var CollapsableNav = ReactBootstrap.CollapsableNav
+
+var NoBetNavbar = React.createClass({
+  render: function() {
+    return (
+      <Navbar brand='NoBet' toggleNavKey={0}>
+        <CollapsableNav eventKey={0}> {/* This is the eventKey referenced */}
+          <Nav navbar right>
+            <NavItem eventKey={1} href='#'>About</NavItem>
+            <NavItem eventKey={2} href='#'>Quit</NavItem>
+          </Nav>
+        </CollapsableNav>
+      </Navbar>
     )
   }
 })
