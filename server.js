@@ -57,10 +57,20 @@ app.route('/records')
 .post(function(req, res, next) {
   var username = nconf.get('apikey')
   var password = nconf.get('password')
+  var queryPath = '/store/set/goodbet/items?1=1'
+  if (!!req.query.orderby) {
+    queryPath += '&orderby=' + req.query.orderby
+  }
+  if (!!req.query.desc) {
+    queryPath += '&desc=' + req.query.desc
+  }
+  if (!!req.query.asc) {
+    queryPath += '&asc=' + req.query.asc
+  }
   var options = {
     hostname: 'backpack.ddns.net',
     port: 443,
-    path: '/store/set/goodbet/items?orderby=BetItem.MatchDate&desc=1',
+    path: queryPath,
     method: 'POST',
     auth: username + ':' + password,
     headers: {

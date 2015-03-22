@@ -1,7 +1,13 @@
 var Page = React.createClass({
-  search: function(query) {
+  search: function(query, options) {
+    var url = this.props.url
+    if (!!options) {
+      options.forEach(function(el, index, arr) {
+        url += '&' + el
+      })
+    }
     $.ajax({
-      url: this.props.url,
+      url: url,
       type: 'POST',
       data: query,
       dataType: 'json',
@@ -30,11 +36,23 @@ var Page = React.createClass({
 })
 
 var SearchBox = React.createClass({
-  onCheckedChange: function() {
-    var isChecked = !this.state.isChecked
-    this.setState({ isChecked: isChecked })
+  onFutureCheckedChange: function() {
+    var isChecked = !this.state.isFutureChecked
+    this.setState({ isFutureChecked: isChecked })
   },
-  handleSubmit: function(e, isChecked) {
+  onClickSortByDate: function(e) {
+    this.setState({
+      isSortedByDate: e.target.value,
+      isSortedByROI: !e.target.value
+    })
+  },
+  onClickSortByROI: function(e) {
+    this.setState({
+      isSortedByDate: !e.target.value,
+      isSortedByROI: e.target.value
+    })
+  },
+  handleSubmit: function(e) {
     if (!!e) {
       e.preventDefault()
     }
@@ -52,13 +70,28 @@ var SearchBox = React.createClass({
       count++
     })
     combinedQuery += ']}'
-    if (this.state.isChecked) {
+    if (this.state.isFutureChecked) {
       combinedQuery = '{"$and":[' + combinedQuery + ', {"$or":[{"BetItem.Result":{"$exists":false}}, {"BetItem.Result":"Unknown"}]}]}'
     }
-    this.props.onSubmit(combinedQuery)
+
+    var options = []
+    if (this.state.isSortedByDate) {
+      options.push('orderby=BetItem.MatchDate')
+      options.push('desc=1')
+    }
+    else if (this.state.isSortedByROI) {
+      options.push('orderby=ROI')
+      options.push('desc=1')
+    }
+
+    this.props.onSubmit(combinedQuery, options)
   },
   getInitialState: function() {
-    return { isChecked: false }
+    return {
+      isChecked: false,
+      isSortedByDate: true,
+      isSortedByROI: false
+      }
   },
   render: function() {
     return (
@@ -73,7 +106,15 @@ var SearchBox = React.createClass({
           </div>
           <div className='checkbox'>
             <label>
-              <input type='checkbox' ref='showFutureOnly' checked={this.state.isChecked} onChange={this.onCheckedChange}> Future Only</input>
+              <input type='checkbox' ref='showFutureOnly' checked={this.state.isFutureChecked} onChange={this.onFutureCheckedChange}> Future Only</input>
+            </label>
+          </div>
+          <div className='radios'>
+            <label>
+              <input type='radio' id='sortByDate' ref='sortByDate' checked={this.state.isSortedByDate} onChange={this.onClickSortByDate}> Sort By Date</input>
+            </label>
+            <label>
+              <input type='radio' id='sortByROI' ref='sortByROI' checked={this.state.isSortedByROI} onChange={this.onClickSortByROI}> Sort By ROI</input>
             </label>
           </div>
         </form>
@@ -86,7 +127,7 @@ var RecordList = React.createClass({
   render: function() {
     var recordNodes = this.props.data.map(function (record) {
       return (
-        <Record data={record} />
+        <Record key={record._id} data={record} />
       )
     })
     return (
@@ -123,6 +164,6 @@ var Record = React.createClass({
 })
 
 React.render(
-  <Page url='/records'/>,
+  <Page url='/records?1=1'/>,
   document.getElementById('container')
 )
