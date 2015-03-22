@@ -22,7 +22,7 @@ body {
 
 .SearchBox {
   position: fixed;
-  width: 60vw;
+  width: 80%;
 }
 
 .RecordList {
