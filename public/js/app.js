@@ -124,6 +124,12 @@ var SearchBox = React.createClass({
   }
 })
 
+var Table = ReactBootstrap.Table
+var thead = ReactBootstrap.thead
+var tr = ReactBootstrap.tr
+var td = ReactBootstrap.td
+var tbody = ReactBootstrap.tbody
+
 var RecordList = React.createClass({
   render: function() {
     var recordNodes = this.props.data.map(function (record) {
@@ -132,9 +138,24 @@ var RecordList = React.createClass({
       )
     })
     return (
-      <div className='RecordList'>
-        {recordNodes}
-      </div>
+      <Table responsive className='RecordList'>
+        <thead>
+          <tr>
+            <th>Team 1</th>
+            <th>Team 2</th>
+            <th>Match Time</th>
+            <th>Odds</th>
+            <th>Odds Time</th>
+            <th>Bookmaker</th>
+            <th>Smart Choice</th>
+            <th>Predicted ROI</th>
+            <th>Actual Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          {recordNodes}
+        </tbody>
+      </Table>
     )
   }
 })
@@ -151,15 +172,17 @@ var Record = React.createClass({
       result = this.props.data.BetItem.Result
     }
     return (
-      <div className='Record'>
-        <h2>{betItem.Teams[0].Name.replace(/_/g, ' ')} vs {betItem.Teams[1].Name.replace(/_/g, ' ')} [{localMatchTime}]</h2>
-        <p>Odds : {betItem.Odds.Win} / {betItem.Odds.Draw} / {betItem.Odds.Lose}</p>
-        <p>Odds Date: {localOddsTime}</p>
-        <p>Bookmaker: {betItem.BookMaker}</p>
-        <p>Smart Choice: <b>{decision}</b></p>
-        <p>Predicted ROI: {toPercent(ROI)}</p>
-        <p>Actual Result: <b>{result}</b></p>
-      </div>
+      <tr className='Record'>
+        <td><b>{betItem.Teams[0].Name.replace(/_/g, ' ')}</b></td>
+        <td><b>{betItem.Teams[1].Name.replace(/_/g, ' ')}</b></td>
+        <td>{localMatchTime}</td>
+        <td>{betItem.Odds.Win} / {betItem.Odds.Draw} / {betItem.Odds.Lose}</td>
+        <td>{localOddsTime}</td>
+        <td>{betItem.BookMaker}</td>
+        <td><b>{decision}</b></td>
+        <td>{toPercent(ROI)}</td>
+        <td><b>{result}</b></td>
+      </tr>
     )
   }
 })
