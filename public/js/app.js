@@ -143,13 +143,13 @@ var RecordList = React.createClass({
           <tr>
             <th>Team 1</th>
             <th>Team 2</th>
+            <th>Smart Choice</th>
+            <th>Actual Result</th>
             <th>Match Time</th>
             <th>Odds</th>
             <th>Odds Time</th>
             <th>Bookmaker</th>
-            <th>Smart Choice</th>
             <th>Predicted ROI</th>
-            <th>Actual Result</th>
           </tr>
         </thead>
         <tbody>
@@ -175,13 +175,13 @@ var Record = React.createClass({
       <tr className='Record'>
         <td><b>{betItem.Teams[0].Name.replace(/_/g, ' ')}</b></td>
         <td><b>{betItem.Teams[1].Name.replace(/_/g, ' ')}</b></td>
+        <td><b>{decision}</b></td>
+        <td><b>{result}</b></td>
         <td>{localMatchTime}</td>
         <td>{betItem.Odds.Win} / {betItem.Odds.Draw} / {betItem.Odds.Lose}</td>
         <td>{localOddsTime}</td>
         <td>{betItem.BookMaker}</td>
-        <td><b>{decision}</b></td>
         <td>{toPercent(ROI)}</td>
-        <td><b>{result}</b></td>
       </tr>
     )
   }
