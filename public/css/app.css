@@ -31,7 +31,8 @@ body {
 .RecordList {
   margin-top: 100px;
   display: inline-block;
-  overflow-y: scroll;
+  overflow-y: auto;
+  overflow-x: auto;
   width: 100%;
   position: absolute;
   top: 120px;

@@ -1,10 +1,3 @@
-Object.assign = require('object-assign')
-var FixedDataTable = require('fixed-data-table');
-
-var Table = FixedDataTable.Table;
-var Column = FixedDataTable.Column;
-
-
 var Page = React.createClass({
   search: function(query, options) {
     var url = this.props.url
@@ -19,33 +12,7 @@ var Page = React.createClass({
       data: query,
       dataType: 'json',
       success: function(data) {
-        var records = data.map(function (record) {
-          var betItem = record.BetItem
-          var decision = record.Decision
-          var ROI = toPercent(record.ROI)
-          var result = 'Unknown'
-          var localMatchTime = new Date(betItem.MatchDate).toLocaleString()
-          var localOddsTime = new Date(betItem.OddsDate).toLocaleString()
-          if (typeof betItem.Result != 'undefined') {
-            result = betItem.Result
-          }
-
-          return (
-            {
-              'Team 1': betItem.Teams[0].Name.replace(/_/g, ' '),
-              'Team 2': betItem.Teams[1].Name.replace(/_/g, ' '),
-              'Smart Choice': decision,
-              'Actual Result': result,
-              'Match Time': localMatchTime,
-              'Odds': betItem.Odds.Win + '/' + betItem.Odds.Draw + '/' + betItem.Odds.Lose,
-              'Odds Time': localOddsTime,
-              'Bookmaker': betItem.BookMaker,
-              'Predicted ROI': ROI
-            }
-          )
-        })
-
-        this.setState({data: records})
+        this.setState({data: data})
       }.bind(this),
       error: function(xhr, status, err) {
         console.error(this.props.url, status, err.toString())
@@ -157,76 +124,21 @@ var SearchBox = React.createClass({
   }
 })
 
-/*
 var Table = ReactBootstrap.Table
 var thead = ReactBootstrap.thead
 var tr = ReactBootstrap.tr
 var td = ReactBootstrap.td
 var tbody = ReactBootstrap.tbody
-*/
 
 var RecordList = React.createClass({
-  rowGetter: function(rowIndex) {
-    return this.props.data[rowIndex];
-  },
   render: function() {
+    var recordNodes = this.props.data.map(function (record) {
+      return (
+        <Record key={record._id} data={record} />
+      )
+    })
     return (
-      <Table
-        rowHeight={50}
-        rowGetter={this.rowGetter}
-        rowCount={this.props.data.length}
-        width={5000}
-        height={5000}
-        headerHeight={50}>
-        <Column
-          label='Team 1'
-          width={3000}
-          dataKey={0}
-        />
-        <Column
-          label='Team 2'
-          width={3000}
-          dataKey={1}
-        />
-        <Column
-          label='Smart Choice'
-          width={3000}
-          dataKey={2}
-        />
-        <Column
-          label='Actual Result'
-          width={3000}
-          dataKey={3}
-        />
-        <Column
-          label='Match Time'
-          width={3000}
-          dataKey={4}
-        />
-        <Column
-          label='Odds'
-          width={3000}
-          dataKey={5}
-        />
-        <Column
-          label='Odds Time'
-          width={3000}
-          dataKey={6}
-        />
-        <Column
-          label='Bookmaker'
-          width={3000}
-          dataKey={7}
-        />
-        <Column
-          label='Predicted ROI'
-          width={3000}
-          dataKey={8}
-        />
-      </Table>
-
-      /*
-      <Table responsive className='RecordList'>
+      <Table striped condensed responsive className='RecordList'>
         <thead>
           <tr>
             <th>Team 1</th>
@@ -244,12 +156,10 @@ var RecordList = React.createClass({
           {recordNodes}
         </tbody>
       </Table>
-      */
     )
   }
 })
 
-/*
 var Record = React.createClass({
   render: function() {
     var betItem = this.props.data.BetItem
@@ -276,7 +186,6 @@ var Record = React.createClass({
     )
   }
 })
-*/
 
 var Navbar = ReactBootstrap.Navbar
 var Nav = ReactBootstrap.Nav
