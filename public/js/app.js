@@ -2,8 +2,11 @@ var Navbar = ReactBootstrap.Navbar
 var Nav = ReactBootstrap.Nav
 var NavItem = ReactBootstrap.NavItem
 var CollapsableNav = ReactBootstrap.CollapsableNav
-var PanelGroup = ReactBootstrap.PanelGroup
+var Grid = ReactBootstrap.Grid
+var Row = ReactBootstrap.Row
+var Col = ReactBootstrap.Col
 var Panel = ReactBootstrap.Panel
+var PanelGroup = ReactBootstrap.PanelGroup
 
 var Table = ReactBootstrap.Table
 var thead = ReactBootstrap.thead
@@ -233,18 +236,26 @@ var StatisticsPage = React.createClass({
       <div className='Page'>
         <NoBetNavbar />
         <PanelGroup>
-          <OverallReturnBox option={0} eventKey='1' pollInterval={600000} url={this.props.url}/>
-          <OverallReturnBox option={1} eventKey='2' pollInterval={600000} url={this.props.url}/>
-          <OverallReturnBox option={2} eventKey='3' pollInterval={600000} url={this.props.url}/>
-          <OverallReturnBox option={3} eventKey='4' pollInterval={600000} url={this.props.url}/>
-          <OverallReturnBox option={4} eventKey='5' pollInterval={600000} url={this.props.url}/>
-          <OverallReturnBox option={5} eventKey='6' pollInterval={600000} url={this.props.url}/>
-          <OverallReturnBox option={6} eventKey='7' pollInterval={600000} url={this.props.url}/>
-          <OverallReturnBox option={7} eventKey='8' pollInterval={600000} url={this.props.url}/>
-          <OverallReturnBox option={8} eventKey='9' pollInterval={600000} url={this.props.url}/>
-          <OverallReturnBox option={9} eventKey='10' pollInterval={600000} url={this.props.url}/>
-          <OverallReturnBox option={10} eventKey='11' pollInterval={600000} url={this.props.url}/>
-          <OverallReturnBox option={15} eventKey='12' pollInterval={600000} url={this.props.url}/>
+          <Grid>
+            <Row>
+              <OverallReturnBox option={0} eventKey='1' pollInterval={600000} url={this.props.url}/>
+              <OverallReturnBox option={1} eventKey='2' pollInterval={600000} url={this.props.url}/>
+              <OverallReturnBox option={2} eventKey='3' pollInterval={600000} url={this.props.url}/>
+              <OverallReturnBox option={3} eventKey='4' pollInterval={600000} url={this.props.url}/>
+            </Row>
+            <Row>
+              <OverallReturnBox option={4} eventKey='5' pollInterval={600000} url={this.props.url}/>
+              <OverallReturnBox option={5} eventKey='6' pollInterval={600000} url={this.props.url}/>
+              <OverallReturnBox option={6} eventKey='7' pollInterval={600000} url={this.props.url}/>
+              <OverallReturnBox option={7} eventKey='8' pollInterval={600000} url={this.props.url}/>
+            </Row>
+            <Row>
+              <OverallReturnBox option={8} eventKey='9' pollInterval={600000} url={this.props.url}/>
+              <OverallReturnBox option={9} eventKey='10' pollInterval={600000} url={this.props.url}/>
+              <OverallReturnBox option={10} eventKey='11' pollInterval={600000} url={this.props.url}/>
+              <OverallReturnBox option={15} eventKey='12' pollInterval={600000} url={this.props.url}/>
+            </Row>
+          </Grid>
         </PanelGroup>
       </div>
     )
@@ -305,23 +316,29 @@ var OverallReturnBox = React.createClass({
     var roi = this.state.ROI + '%'
     if (this.state.ROI < 0) {
       return (
-        <Panel header={header} eventKey={this.props.eventKey} bsStyle='danger'>
-          <h4>{roi}</h4>
-        </Panel>
+        <Col xs={6} md={3}>
+          <Panel header={header} eventKey={this.props.eventKey} bsStyle='danger'>
+            <h4>{roi}</h4>
+          </Panel>
+        </Col>
       )
     }
     else if (this.state.ROI < 5) {
       return (
-        <Panel header={header} eventKey={this.props.eventKey} bsStyle='warning'>
-          <h4>{roi}</h4>
-        </Panel>
+        <Col xs={6} md={3}>
+          <Panel header={header} eventKey={this.props.eventKey} bsStyle='warning'>
+            <h4>{roi}</h4>
+          </Panel>
+        </Col>
       )
     }
     else {
       return (
-        <Panel header={header} eventKey={this.props.eventKey} bsStyle='success'>
-          <h4>{roi}</h4>
-        </Panel>
+        <Col xs={6} md={3}>
+          <Panel header={header} eventKey={this.props.eventKey} bsStyle='success'>
+            <h4>{roi}</h4>
+          </Panel>
+        </Col>
       )
     }
   }

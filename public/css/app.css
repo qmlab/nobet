@@ -37,8 +37,10 @@ body {
 }
 
 .panel-group {
-  overflow-y:auto;
+  overflow-y: auto;
   height: 80vh;
-  padding-left: 20%;
-  padding-right: 20%;
+}
+
+.row {
+  margin-bottom: 3vh;
 }
