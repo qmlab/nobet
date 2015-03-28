@@ -16,7 +16,7 @@ var tbody = ReactBootstrap.tbody
 
 var SearchPage = React.createClass({
   search: function(query, options) {
-    var url = this.props.url
+    var url = this.props.url + 'records?1=1'
     if (!!options) {
       options.forEach(function(el, index, arr) {
         url += '&' + el
@@ -203,7 +203,7 @@ var NoBetNavbar = React.createClass({
       e.preventDefault()
     }
     React.render(
-      <SearchPage url='/records?1=1'/>,
+      <SearchPage url='/'/>,
       document.getElementById('pageContainer')
     )
   },
@@ -212,7 +212,7 @@ var NoBetNavbar = React.createClass({
       e.preventDefault()
     }
     React.render(
-      <StatisticsPage url='/records'/>,
+      <StatisticsPage url='/'/>,
       document.getElementById('pageContainer')
     )
   },
@@ -232,28 +232,34 @@ var NoBetNavbar = React.createClass({
 
 var StatisticsPage = React.createClass({
   render: function() {
+    var itemUrl = this.props.url + 'records'
+    var countUrl = this.props.url + 'total'
     return (
       <div className='Page'>
         <NoBetNavbar />
         <PanelGroup>
           <Grid>
             <Row>
-              <OverallReturnBox option={0} eventKey='1' pollInterval={600000} url={this.props.url}/>
-              <OverallReturnBox option={1} eventKey='2' pollInterval={600000} url={this.props.url}/>
-              <OverallReturnBox option={2} eventKey='3' pollInterval={600000} url={this.props.url}/>
-              <OverallReturnBox option={3} eventKey='4' pollInterval={600000} url={this.props.url}/>
+              <CounterBoxTotal eventKey='13' pollInterval={600000} url={countUrl}/>
+              <CounterBoxPastAll eventKey='14' pollInterval={600000} url={countUrl}/>
             </Row>
             <Row>
-              <OverallReturnBox option={4} eventKey='5' pollInterval={600000} url={this.props.url}/>
-              <OverallReturnBox option={5} eventKey='6' pollInterval={600000} url={this.props.url}/>
-              <OverallReturnBox option={6} eventKey='7' pollInterval={600000} url={this.props.url}/>
-              <OverallReturnBox option={7} eventKey='8' pollInterval={600000} url={this.props.url}/>
+              <OverallReturnBox option={0} eventKey='1' pollInterval={600000} url={itemUrl}/>
+              <OverallReturnBox option={1} eventKey='2' pollInterval={600000} url={itemUrl}/>
+              <OverallReturnBox option={2} eventKey='3' pollInterval={600000} url={itemUrl}/>
+              <OverallReturnBox option={3} eventKey='4' pollInterval={600000} url={itemUrl}/>
             </Row>
             <Row>
-              <OverallReturnBox option={8} eventKey='9' pollInterval={600000} url={this.props.url}/>
-              <OverallReturnBox option={9} eventKey='10' pollInterval={600000} url={this.props.url}/>
-              <OverallReturnBox option={10} eventKey='11' pollInterval={600000} url={this.props.url}/>
-              <OverallReturnBox option={15} eventKey='12' pollInterval={600000} url={this.props.url}/>
+              <OverallReturnBox option={4} eventKey='5' pollInterval={600000} url={itemUrl}/>
+              <OverallReturnBox option={5} eventKey='6' pollInterval={600000} url={itemUrl}/>
+              <OverallReturnBox option={6} eventKey='7' pollInterval={600000} url={itemUrl}/>
+              <OverallReturnBox option={7} eventKey='8' pollInterval={600000} url={itemUrl}/>
+            </Row>
+            <Row>
+              <OverallReturnBox option={8} eventKey='9' pollInterval={600000} url={itemUrl}/>
+              <OverallReturnBox option={9} eventKey='10' pollInterval={600000} url={itemUrl}/>
+              <OverallReturnBox option={10} eventKey='11' pollInterval={600000} url={itemUrl}/>
+              <OverallReturnBox option={15} eventKey='12' pollInterval={600000} url={itemUrl}/>
             </Row>
           </Grid>
         </PanelGroup>
@@ -344,7 +350,72 @@ var OverallReturnBox = React.createClass({
   }
 })
 
+var CounterBox = React.createClass({
+  loadTotalFromServer: function() {
+    var url = this.props.url
+    var query = this.props.query
+
+    $.ajax({
+      url: url,
+      type: 'POST',
+      data: JSON.stringify(query),
+      dataType: 'json',
+      success: function(count) {
+        if (count.length > 0) {
+          this.setState({counter: count[0].value})
+        }
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString())
+      }.bind(this)
+    })
+  },
+  getInitialState: function() {
+    return {
+      counter: 0
+    }
+  },
+  componentDidMount: function() {
+    this.loadTotalFromServer();
+    setInterval(this.loadTotalFromServer, this.props.pollInterval);
+  },
+  render: function() {
+    return (
+      <Col xs={6} md={3}>
+        <Panel header={this.props.header} eventKey={this.props.eventKey} bsStyle='primary'>
+          <h4>{this.state.counter}</h4>
+        </Panel>
+      </Col>
+    )
+  }
+})
+
+var CounterBoxTotal = React.createClass({
+  render: function() {
+    var header = 'Total Matches'
+    var query = {}
+    return (
+      <CounterBox query={query} header={header} eventKey={this.props.eventKey} pollInterval={this.props.pollInterval} url={this.props.url} />
+    )
+  }
+})
+
+var CounterBoxPastAll = React.createClass({
+  render: function() {
+    var header = 'Past Matches'
+    var query = {
+      '$and': [
+        {'BetItem.Result': {'$exists': 'true'}},
+        {'BetItem.Result': {'$ne': 'Unknown'}}
+      ]
+    }
+    return (
+      <CounterBox query={query} header={header} eventKey={this.props.eventKey} pollInterval={this.props.pollInterval} url={this.props.url} />
+    )
+  }
+})
+
 React.render(
-  <SearchPage url='/records?1=1'/>,
+  <SearchPage url='/'/>,
   document.getElementById('pageContainer')
 )

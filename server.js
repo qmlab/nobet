@@ -104,6 +104,48 @@ app.route('/records')
   _req.end()
 })
 
+app.route('/total')
+.post(function(req, res, next) {
+  var username = nconf.get('apikey')
+  var password = nconf.get('password')
+  var queryPath = '/store/set/goodbet/count'
+  var options = {
+    hostname: 'backpack.ddns.net',
+    port: 443,
+    path: queryPath,
+    method: 'POST',
+    auth: username + ':' + password,
+    headers: {
+      'Content-Type': 'application/json',
+      'Keep-Alive': false
+    }
+  }
+
+  var _req = https.request(options, function(_res) {
+    _res.setEncoding('utf8')
+    _res.on('data', function(data) {
+      res.write(data)
+      next()
+    })
+    _res.on('close', function() {
+      res.status(_res.statusCode).end()
+    })
+    _res.on('end', function() {
+      res.status(_res.statusCode).end()
+    })
+  }).on('error', function(e) {
+    res.writeHead(500)
+    console.error(e.message)
+    res.end()
+  })
+
+  var query = Object.keys(req.body)[0]
+  if (typeof query !== 'undefined') {
+    _req.write(query)
+  }
+  _req.end()
+})
+
 server = http.createServer(app)
 server.listen(port, function() {
   console.log('Debug: server listening at port %d', port)
