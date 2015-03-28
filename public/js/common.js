@@ -1,5 +1,5 @@
 function toPercent(input) {
-  return (Math.floor(input * 10000) / 100) + '%'
+  return (Math.floor(input * 10000 * 5) / 100) + '%'
 }
 
 function daysAgo(days) {

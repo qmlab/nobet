@@ -340,7 +340,7 @@ var OverallReturnBox = React.createClass({
     setInterval(this.loadROIFromServer, this.props.pollInterval);
   },
   render: function() {
-    var header = 'Return | Conf. > ' + this.props.option.roi + '%'
+    var header = 'Return | Conf. > ' + this.props.option.roi * 5 + '%'
     if (!!this.props.option.timeRange) {
       header += ' | Past ' + this.props.option.timeRange + ' days'
     }
