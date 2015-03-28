@@ -7,6 +7,7 @@ var Row = ReactBootstrap.Row
 var Col = ReactBootstrap.Col
 var Panel = ReactBootstrap.Panel
 var PanelGroup = ReactBootstrap.PanelGroup
+var Well = ReactBootstrap.Well
 
 var Table = ReactBootstrap.Table
 var thead = ReactBootstrap.thead
@@ -155,7 +156,7 @@ var RecordList = React.createClass({
             <th>Away Team</th>
             <th>NoBet Choice</th>
             <th>Real Result</th>
-            <th>Confidence</th>
+            <th><strong>Confidence</strong></th>
             <th>Match Time</th>
             <th>Odds</th>
             <th>Odds Time</th>
@@ -174,20 +175,31 @@ var Record = React.createClass({
   render: function() {
     var betItem = this.props.data.BetItem
     var decision = this.props.data.Decision
-    var ROI = this.props.data.ROI
+    var roi = toPercent(this.props.data.ROI)
     var result = 'Unknown'
     var localMatchTime = new Date(betItem.MatchDate).toLocaleString()
     var localOddsTime = new Date(betItem.OddsDate).toLocaleString()
     if (typeof this.props.data.BetItem.Result != 'undefined') {
       result = this.props.data.BetItem.Result
     }
+    var roiClass = 'normalLvl'
+    if (this.props.data.ROI >= 0.05) {
+      roiClass = 'goodLvl'
+    }
+    else if (this.props.data.ROI >= 0.02) {
+      roiClass = 'fairLvl'
+    }
+    else if (this.props.data.ROI < 0) {
+      roiClass = 'poorLvl'
+    }
+
     return (
       <tr className='Record'>
-        <td><b>{betItem.Teams[0].Name.replace(/_/g, ' ')}</b></td>
-        <td><b>{betItem.Teams[1].Name.replace(/_/g, ' ')}</b></td>
-        <td><b>{decision}</b></td>
-        <td><b>{result}</b></td>
-        <td>{toPercent(ROI)}</td>
+        <td>{betItem.Teams[0].Name.replace(/_/g, ' ')}</td>
+        <td>{betItem.Teams[1].Name.replace(/_/g, ' ')}</td>
+        <td><strong>{decision}</strong></td>
+        <td><strong>{result}</strong></td>
+        <td className={roiClass}><strong>{roi}</strong></td>
         <td>{localMatchTime}</td>
         <td>{betItem.Odds.Win} / {betItem.Odds.Draw} / {betItem.Odds.Lose}</td>
         <td>{localOddsTime}</td>
@@ -241,25 +253,24 @@ var StatisticsPage = React.createClass({
           <Grid>
             <Row>
               <CounterBoxTotal eventKey='13' pollInterval={600000} url={countUrl}/>
-              <CounterBoxPastAll eventKey='14' pollInterval={600000} url={countUrl}/>
             </Row>
             <Row>
-              <OverallReturnBox option={0} eventKey='1' pollInterval={600000} url={itemUrl}/>
-              <OverallReturnBox option={1} eventKey='2' pollInterval={600000} url={itemUrl}/>
-              <OverallReturnBox option={2} eventKey='3' pollInterval={600000} url={itemUrl}/>
-              <OverallReturnBox option={3} eventKey='4' pollInterval={600000} url={itemUrl}/>
+              <CounterBoxPastAll eventKey='4' pollInterval={600000} url={countUrl}/>
+              <OverallReturnBox option={{roi: 0}} eventKey='1' pollInterval={600000} url={itemUrl}/>
+              <OverallReturnBox option={{roi: 5}} eventKey='2' pollInterval={600000} url={itemUrl}/>
+              <OverallReturnBox option={{roi: 10}} eventKey='3' pollInterval={600000} url={itemUrl}/>
             </Row>
             <Row>
-              <OverallReturnBox option={4} eventKey='5' pollInterval={600000} url={itemUrl}/>
-              <OverallReturnBox option={5} eventKey='6' pollInterval={600000} url={itemUrl}/>
-              <OverallReturnBox option={6} eventKey='7' pollInterval={600000} url={itemUrl}/>
-              <OverallReturnBox option={7} eventKey='8' pollInterval={600000} url={itemUrl}/>
+              <CounterBoxPast30Days eventKey='8' pollInterval={600000} url={countUrl}/>
+              <OverallReturnBox option={{roi: 0, timeRange: 30}} eventKey='5' pollInterval={600000} url={itemUrl}/>
+              <OverallReturnBox option={{roi: 5, timeRange: 30}} eventKey='6' pollInterval={600000} url={itemUrl}/>
+              <OverallReturnBox option={{roi: 10, timeRange: 30}} eventKey='7' pollInterval={600000} url={itemUrl}/>
             </Row>
             <Row>
-              <OverallReturnBox option={8} eventKey='9' pollInterval={600000} url={itemUrl}/>
-              <OverallReturnBox option={9} eventKey='10' pollInterval={600000} url={itemUrl}/>
-              <OverallReturnBox option={10} eventKey='11' pollInterval={600000} url={itemUrl}/>
-              <OverallReturnBox option={15} eventKey='12' pollInterval={600000} url={itemUrl}/>
+              <CounterBoxPast60Days eventKey='12' pollInterval={600000} url={countUrl}/>
+              <OverallReturnBox option={{roi: 0, timeRange: 60}} eventKey='9' pollInterval={600000} url={itemUrl}/>
+              <OverallReturnBox option={{roi: 5, timeRange: 60}} eventKey='10' pollInterval={600000} url={itemUrl}/>
+              <OverallReturnBox option={{roi: 10, timeRange: 60}} eventKey='11' pollInterval={600000} url={itemUrl}/>
             </Row>
           </Grid>
         </PanelGroup>
@@ -275,9 +286,14 @@ var OverallReturnBox = React.createClass({
       '$and': [
         {'BetItem.Result': {'$exists': 'true'}},
         {'BetItem.Result': {'$ne': 'Unknown'}},
-        {'ROI': {'$gte': this.props.option / 100}}
+        {'ROI': {'$gte': this.props.option.roi / 100}}
       ]
     }
+    if (!!this.props.option.timeRange) {
+      var afterDate = daysAgo(this.props.option.timeRange)
+      query['$and'].push({'BetItem.MatchDate': {'$gte': afterDate}})
+    }
+
     $.ajax({
       url: url,
       type: 'POST',
@@ -314,11 +330,17 @@ var OverallReturnBox = React.createClass({
     }
   },
   componentDidMount: function() {
-    this.loadROIFromServer(this.props.option);
+    this.loadROIFromServer();
     setInterval(this.loadROIFromServer, this.props.pollInterval);
   },
   render: function() {
-    var header = 'Real Return (Confidence > ' + this.props.option + '%)'
+    var header = 'Return | Conf. > ' + this.props.option.roi + '%'
+    if (!!this.props.option.timeRange) {
+      header += ' | Past ' + this.props.option.timeRange + ' days'
+    }
+    else {
+      header += ' | Overall'
+    }
     var roi = this.state.ROI + '%'
     if (this.state.ROI < 0) {
       return (
@@ -402,11 +424,43 @@ var CounterBoxTotal = React.createClass({
 
 var CounterBoxPastAll = React.createClass({
   render: function() {
-    var header = 'Past Matches'
+    var header = 'All Past Matches'
     var query = {
       '$and': [
         {'BetItem.Result': {'$exists': 'true'}},
         {'BetItem.Result': {'$ne': 'Unknown'}}
+      ]
+    }
+    return (
+      <CounterBox query={query} header={header} eventKey={this.props.eventKey} pollInterval={this.props.pollInterval} url={this.props.url} />
+    )
+  }
+})
+
+var CounterBoxPast30Days = React.createClass({
+  render: function() {
+    var header = 'Matches in last 30 days'
+    var query = {
+      '$and': [
+        {'BetItem.Result': {'$exists': 'true'}},
+        {'BetItem.Result': {'$ne': 'Unknown'}},
+        {'BetItem.MatchDate': {'$gte': daysAgo(30)}}
+      ]
+    }
+    return (
+      <CounterBox query={query} header={header} eventKey={this.props.eventKey} pollInterval={this.props.pollInterval} url={this.props.url} />
+    )
+  }
+})
+
+var CounterBoxPast60Days = React.createClass({
+  render: function() {
+    var header = 'Matches in last 60 days'
+    var query = {
+      '$and': [
+        {'BetItem.Result': {'$exists': 'true'}},
+        {'BetItem.Result': {'$ne': 'Unknown'}},
+        {'BetItem.MatchDate': {'$gte': daysAgo(60)}}
       ]
     }
     return (

@@ -44,3 +44,28 @@ body {
 .row {
   margin-bottom: 3vh;
 }
+
+.normalLvl {
+  color: white;
+  background-color: #82D9B2;
+}
+
+.fairLvl {
+  color: white;
+  background-color: #4DA64D;
+}
+
+.goodLvl {
+  color: white;
+  background-color: green;
+}
+
+.poorLvl {
+  color: white;
+  background-color: #D8ECD8;
+}
+
+.badLvl {
+  color: white;
+  background-color: red;
+}
