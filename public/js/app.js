@@ -148,8 +148,8 @@ var RecordList = React.createClass({
       <Table striped condensed responsive className='RecordList'>
         <thead>
           <tr>
-            <th>Team 1</th>
-            <th>Team 2</th>
+            <th>Home Team</th>
+            <th>Away Team</th>
             <th>NoBet Choice</th>
             <th>Real Result</th>
             <th>Confidence</th>
