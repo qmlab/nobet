@@ -404,7 +404,7 @@ var CounterBox = React.createClass({
   render: function() {
     return (
       <Col xs={6} md={3}>
-        <Panel header={this.props.header} eventKey={this.props.eventKey} bsStyle='primary'>
+        <Panel header={this.props.header} eventKey={this.props.eventKey} bsStyle='info'>
           <h4>{this.state.counter}</h4>
         </Panel>
       </Col>
