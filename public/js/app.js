@@ -233,18 +233,18 @@ var StatisticsPage = React.createClass({
       <div className='Page'>
         <NoBetNavbar />
         <PanelGroup>
-          <OverallReturnBox option={0} eventKey='1' pollInterval={60000} url={this.props.url}/>
-          <OverallReturnBox option={1} eventKey='2' pollInterval={60000} url={this.props.url}/>
-          <OverallReturnBox option={2} eventKey='3' pollInterval={60000} url={this.props.url}/>
-          <OverallReturnBox option={3} eventKey='4' pollInterval={60000} url={this.props.url}/>
-          <OverallReturnBox option={4} eventKey='5' pollInterval={60000} url={this.props.url}/>
-          <OverallReturnBox option={5} eventKey='6' pollInterval={60000} url={this.props.url}/>
-          <OverallReturnBox option={6} eventKey='7' pollInterval={60000} url={this.props.url}/>
-          <OverallReturnBox option={7} eventKey='8' pollInterval={60000} url={this.props.url}/>
-          <OverallReturnBox option={8} eventKey='9' pollInterval={60000} url={this.props.url}/>
-          <OverallReturnBox option={9} eventKey='10' pollInterval={60000} url={this.props.url}/>
-          <OverallReturnBox option={10} eventKey='11' pollInterval={60000} url={this.props.url}/>
-          <OverallReturnBox option={15} eventKey='12' pollInterval={60000} url={this.props.url}/>
+          <OverallReturnBox option={0} eventKey='1' pollInterval={600000} url={this.props.url}/>
+          <OverallReturnBox option={1} eventKey='2' pollInterval={600000} url={this.props.url}/>
+          <OverallReturnBox option={2} eventKey='3' pollInterval={600000} url={this.props.url}/>
+          <OverallReturnBox option={3} eventKey='4' pollInterval={600000} url={this.props.url}/>
+          <OverallReturnBox option={4} eventKey='5' pollInterval={600000} url={this.props.url}/>
+          <OverallReturnBox option={5} eventKey='6' pollInterval={600000} url={this.props.url}/>
+          <OverallReturnBox option={6} eventKey='7' pollInterval={600000} url={this.props.url}/>
+          <OverallReturnBox option={7} eventKey='8' pollInterval={600000} url={this.props.url}/>
+          <OverallReturnBox option={8} eventKey='9' pollInterval={600000} url={this.props.url}/>
+          <OverallReturnBox option={9} eventKey='10' pollInterval={600000} url={this.props.url}/>
+          <OverallReturnBox option={10} eventKey='11' pollInterval={600000} url={this.props.url}/>
+          <OverallReturnBox option={15} eventKey='12' pollInterval={600000} url={this.props.url}/>
         </PanelGroup>
       </div>
     )
