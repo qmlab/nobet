@@ -154,9 +154,9 @@ var RecordList = React.createClass({
           <tr>
             <th>Home Team</th>
             <th>Away Team</th>
+            <th>Confidence</th>
             <th>NoBet Choice</th>
             <th>Real Result</th>
-            <th><strong>Confidence</strong></th>
             <th>Match Time</th>
             <th>Odds</th>
             <th>Odds Time</th>
@@ -175,37 +175,37 @@ var Record = React.createClass({
   render: function() {
     var betItem = this.props.data.BetItem
     var decision = this.props.data.Decision
-    var roi = toPercent(this.props.data.ROI)
+    var confidence = toPercent(this.props.data.ROI)
     var result = 'Unknown'
     var localMatchTime = new Date(betItem.MatchDate).toLocaleString()
     var localOddsTime = new Date(betItem.OddsDate).toLocaleString()
     if (typeof this.props.data.BetItem.Result != 'undefined') {
       result = this.props.data.BetItem.Result
     }
-    var roiClass = 'normalLvl'
+    var confidenceClass = 'normalLvl'
     if (this.props.data.ROI >= 0.2) {
-      roiClass = 'excellentLvl'
+      confidenceClass = 'excellentLvl'
     }
     else if (this.props.data.ROI >= 0.1) {
-      roiClass = 'veryGoodLvl'
+      confidenceClass = 'veryGoodLvl'
     }
     else if (this.props.data.ROI >= 0.05) {
-      roiClass = 'goodLvl'
+      confidenceClass = 'goodLvl'
     }
     else if (this.props.data.ROI >= 0.02) {
-      roiClass = 'fairLvl'
+      confidenceClass = 'fairLvl'
     }
     else if (this.props.data.ROI < 0) {
-      roiClass = 'poorLvl'
+      confidenceClass = 'poorLvl'
     }
 
     return (
       <tr className='Record'>
         <td>{betItem.Teams[0].Name.replace(/_/g, ' ')}</td>
         <td>{betItem.Teams[1].Name.replace(/_/g, ' ')}</td>
+        <td className={confidenceClass}><strong>{confidence}</strong></td>
         <td><strong>{decision}</strong></td>
         <td><strong>{result}</strong></td>
-        <td className={roiClass}><strong>{roi}</strong></td>
         <td>{localMatchTime}</td>
         <td>{betItem.Odds.Win} / {betItem.Odds.Draw} / {betItem.Odds.Lose}</td>
         <td>{localOddsTime}</td>
