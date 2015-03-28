@@ -183,7 +183,13 @@ var Record = React.createClass({
       result = this.props.data.BetItem.Result
     }
     var roiClass = 'normalLvl'
-    if (this.props.data.ROI >= 0.05) {
+    if (this.props.data.ROI >= 0.2) {
+      roiClass = 'excellentLvl'
+    }
+    else if (this.props.data.ROI >= 0.1) {
+      roiClass = 'veryGoodLvl'
+    }
+    else if (this.props.data.ROI >= 0.05) {
       roiClass = 'goodLvl'
     }
     else if (this.props.data.ROI >= 0.02) {

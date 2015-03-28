@@ -45,6 +45,16 @@ body {
   margin-bottom: 3vh;
 }
 
+.badLvl {
+  color: white;
+  background-color: red;
+}
+
+.poorLvl {
+  color: white;
+  background-color: #D8ECD8;
+}
+
 .normalLvl {
   color: white;
   background-color: #82D9B2;
@@ -60,12 +70,12 @@ body {
   background-color: green;
 }
 
-.poorLvl {
+.veryGoodLvl {
   color: white;
-  background-color: #D8ECD8;
+  background-color: #005A00;
 }
 
-.badLvl {
+.excellentLvl {
   color: white;
-  background-color: red;
+  background-color: #003300;
 }
