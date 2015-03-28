@@ -39,6 +39,6 @@ body {
 .panel-group {
   overflow-y:auto;
   height: 80vh;
-  padding-left: 10%;
-  padding-right: 10%;
+  padding-left: 20%;
+  padding-right: 20%;
 }
