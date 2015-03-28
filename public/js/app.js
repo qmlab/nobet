@@ -5,6 +5,12 @@ var CollapsableNav = ReactBootstrap.CollapsableNav
 var PanelGroup = ReactBootstrap.PanelGroup
 var Panel = ReactBootstrap.Panel
 
+var Table = ReactBootstrap.Table
+var thead = ReactBootstrap.thead
+var tr = ReactBootstrap.tr
+var td = ReactBootstrap.td
+var tbody = ReactBootstrap.tbody
+
 var SearchPage = React.createClass({
   search: function(query, options) {
     var url = this.props.url
@@ -131,12 +137,6 @@ var SearchBox = React.createClass({
   }
 })
 
-var Table = ReactBootstrap.Table
-var thead = ReactBootstrap.thead
-var tr = ReactBootstrap.tr
-var td = ReactBootstrap.td
-var tbody = ReactBootstrap.tbody
-
 var RecordList = React.createClass({
   render: function() {
     var recordNodes = this.props.data.map(function (record) {
@@ -150,13 +150,13 @@ var RecordList = React.createClass({
           <tr>
             <th>Team 1</th>
             <th>Team 2</th>
-            <th>Smart Choice</th>
-            <th>Actual Result</th>
+            <th>NoBet Choice</th>
+            <th>Real Result</th>
+            <th>Confidence</th>
             <th>Match Time</th>
             <th>Odds</th>
             <th>Odds Time</th>
             <th>Bookmaker</th>
-            <th>Predicted ROI</th>
           </tr>
         </thead>
         <tbody>
@@ -184,11 +184,11 @@ var Record = React.createClass({
         <td><b>{betItem.Teams[1].Name.replace(/_/g, ' ')}</b></td>
         <td><b>{decision}</b></td>
         <td><b>{result}</b></td>
+        <td>{toPercent(ROI)}</td>
         <td>{localMatchTime}</td>
         <td>{betItem.Odds.Win} / {betItem.Odds.Draw} / {betItem.Odds.Lose}</td>
         <td>{localOddsTime}</td>
         <td>{betItem.BookMaker}</td>
-        <td>{toPercent(ROI)}</td>
       </tr>
     )
   }
