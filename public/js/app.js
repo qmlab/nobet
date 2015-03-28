@@ -1,4 +1,11 @@
-var Page = React.createClass({
+var Navbar = ReactBootstrap.Navbar
+var Nav = ReactBootstrap.Nav
+var NavItem = ReactBootstrap.NavItem
+var CollapsableNav = ReactBootstrap.CollapsableNav
+var PanelGroup = ReactBootstrap.PanelGroup
+var Panel = ReactBootstrap.Panel
+
+var SearchPage = React.createClass({
   search: function(query, options) {
     var url = this.props.url
     if (!!options) {
@@ -187,19 +194,32 @@ var Record = React.createClass({
   }
 })
 
-var Navbar = ReactBootstrap.Navbar
-var Nav = ReactBootstrap.Nav
-var NavItem = ReactBootstrap.NavItem
-var CollapsableNav = ReactBootstrap.CollapsableNav
-
 var NoBetNavbar = React.createClass({
+  onClickSearch: function(e) {
+    if (!!e) {
+      e.preventDefault()
+    }
+    React.render(
+      <SearchPage url='/records?1=1'/>,
+      document.getElementById('pageContainer')
+    )
+  },
+  onClickStatistics: function(e) {
+    if (!!e) {
+      e.preventDefault()
+    }
+    React.render(
+      <StatisticsPage url='/records'/>,
+      document.getElementById('pageContainer')
+    )
+  },
   render: function() {
     return (
       <Navbar brand='NoBet' toggleNavKey={0}>
         <CollapsableNav eventKey={0}> {/* This is the eventKey referenced */}
           <Nav navbar right>
-            <NavItem eventKey={1} href='#'>About</NavItem>
-            <NavItem eventKey={2} href='#'>Quit</NavItem>
+            <NavItem eventKey={1} href='#' onClick={this.onClickSearch}>Search</NavItem>
+            <NavItem eventKey={2} href='#' onClick={this.onClickStatistics}>Statistics</NavItem>
           </Nav>
         </CollapsableNav>
       </Navbar>
@@ -207,7 +227,107 @@ var NoBetNavbar = React.createClass({
   }
 })
 
+var StatisticsPage = React.createClass({
+  render: function() {
+    return (
+      <div className='Page'>
+        <NoBetNavbar />
+        <PanelGroup>
+          <OverallReturnBox option={0} eventKey='1' pollInterval={60000} url={this.props.url}/>
+          <OverallReturnBox option={1} eventKey='2' pollInterval={60000} url={this.props.url}/>
+          <OverallReturnBox option={2} eventKey='3' pollInterval={60000} url={this.props.url}/>
+          <OverallReturnBox option={3} eventKey='4' pollInterval={60000} url={this.props.url}/>
+          <OverallReturnBox option={4} eventKey='5' pollInterval={60000} url={this.props.url}/>
+          <OverallReturnBox option={5} eventKey='6' pollInterval={60000} url={this.props.url}/>
+          <OverallReturnBox option={6} eventKey='7' pollInterval={60000} url={this.props.url}/>
+          <OverallReturnBox option={7} eventKey='8' pollInterval={60000} url={this.props.url}/>
+          <OverallReturnBox option={8} eventKey='9' pollInterval={60000} url={this.props.url}/>
+          <OverallReturnBox option={9} eventKey='10' pollInterval={60000} url={this.props.url}/>
+          <OverallReturnBox option={10} eventKey='11' pollInterval={60000} url={this.props.url}/>
+          <OverallReturnBox option={15} eventKey='12' pollInterval={60000} url={this.props.url}/>
+        </PanelGroup>
+      </div>
+    )
+  }
+})
+
+var OverallReturnBox = React.createClass({
+  loadROIFromServer: function() {
+    var url = this.props.url
+    var query = {
+      '$and': [
+        {'BetItem.Result': {'$exists': 'true'}},
+        {'BetItem.Result': {'$ne': 'Unknown'}},
+        {'ROI': {'$gte': this.props.option / 100}}
+      ]
+    }
+    $.ajax({
+      url: url,
+      type: 'POST',
+      data: JSON.stringify(query),
+      dataType: 'json',
+      success: function(stakes) {
+        var actualReturn = 0
+        stakes.forEach(function(stake, i, arr) {
+          if (stake.Decision == stake.BetItem.Result) {
+            if (stake.BetItem.Result == 'Win') {
+              actualReturn += stake.BetItem.Odds.Win
+            }
+            if (stake.BetItem.Result == 'Draw') {
+              actualReturn += stake.BetItem.Odds.Draw
+            }
+            if (stake.BetItem.Result == 'Lose') {
+              actualReturn += stake.BetItem.Odds.Lose
+            }
+          }
+        })
+        if (stakes.length > 0) {
+          actualReturn = Math.round((actualReturn / stakes.length - 1) * 10000) / 100
+        }
+        this.setState({ROI: actualReturn})
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString())
+      }.bind(this)
+    })
+  },
+  getInitialState: function() {
+    return {
+      ROI: 0
+    }
+  },
+  componentDidMount: function() {
+    this.loadROIFromServer(this.props.option);
+    setInterval(this.loadROIFromServer, this.props.pollInterval);
+  },
+  render: function() {
+    var header = 'Bet on stakes > ' + this.props.option + '%'
+    var roi = this.state.ROI + '%'
+    if (this.state.ROI < 0) {
+      return (
+        <Panel header={header} eventKey={this.props.eventKey} bsStyle='danger'>
+          <h4>{roi}</h4>
+        </Panel>
+      )
+    }
+    else if (this.state.ROI < 5) {
+      return (
+        <Panel header={header} eventKey={this.props.eventKey} bsStyle='warning'>
+          <h4>{roi}</h4>
+        </Panel>
+      )
+    }
+    else {
+      return (
+        <Panel header={header} eventKey={this.props.eventKey} bsStyle='success'>
+          <h4>{roi}</h4>
+        </Panel>
+      )
+    }
+  }
+})
+
 React.render(
-  <Page url='/records?1=1'/>,
-  document.getElementById('container')
+  <SearchPage url='/records?1=1'/>,
+  document.getElementById('pageContainer')
 )

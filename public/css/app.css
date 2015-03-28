@@ -16,9 +16,6 @@ body {
   overflow: hidden;
 }
 
-#container {
-}
-
 .navbar-brand {
   position: absolute;
   left: 15px;
@@ -37,4 +34,9 @@ body {
   position: absolute;
   top: 120px;
   bottom: 5%;
+}
+
+.panel-group {
+  overflow-y:auto;
+  height: 80vh;
 }
