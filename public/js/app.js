@@ -301,7 +301,7 @@ var OverallReturnBox = React.createClass({
     setInterval(this.loadROIFromServer, this.props.pollInterval);
   },
   render: function() {
-    var header = 'Rate of Return (Bet on all stakes with confidence level > ' + this.props.option + '%)'
+    var header = 'Real Return (Confidence level > ' + this.props.option + '%)'
     var roi = this.state.ROI + '%'
     if (this.state.ROI < 0) {
       return (
