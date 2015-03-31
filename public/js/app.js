@@ -259,24 +259,24 @@ var StatisticsPage = React.createClass({
           <Grid>
             <Row>
               <CounterBoxTotal eventKey='13' pollInterval={600000} url={countUrl}/>
-              <CounterBoxConfGreaterThan0 eventKey='14' pollInterval={600000} url={countUrl}/>
-              <CounterBoxConfGreaterThan25 eventKey='15' pollInterval={600000} url={countUrl}/>
-              <CounterBoxConfGreaterThan50 eventKey='16' pollInterval={600000} url={countUrl}/>
+              <CounterBoxConfGreaterThanN threshold={0} eventKey='14' pollInterval={600000} url={countUrl}/>
+              <CounterBoxConfGreaterThanN threshold={25} eventKey='15' pollInterval={600000} url={countUrl}/>
+              <CounterBoxConfGreaterThanN threshold={50} eventKey='16' pollInterval={600000} url={countUrl}/>
             </Row>
             <Row>
-              <CounterBoxPastAll eventKey='4' pollInterval={600000} url={countUrl}/>
+              <CounterBoxPastNDays eventKey='4' pollInterval={600000} url={countUrl}/>
               <OverallReturnBox option={{roi: 0}} eventKey='1' pollInterval={600000} url={itemUrl}/>
               <OverallReturnBox option={{roi: 5}} eventKey='2' pollInterval={600000} url={itemUrl}/>
               <OverallReturnBox option={{roi: 10}} eventKey='3' pollInterval={600000} url={itemUrl}/>
             </Row>
             <Row>
-              <CounterBoxPast30Days eventKey='8' pollInterval={600000} url={countUrl}/>
+              <CounterBoxPastNDays days={30} eventKey='8' pollInterval={600000} url={countUrl}/>
               <OverallReturnBox option={{roi: 0, timeRange: 30}} eventKey='5' pollInterval={600000} url={itemUrl}/>
               <OverallReturnBox option={{roi: 5, timeRange: 30}} eventKey='6' pollInterval={600000} url={itemUrl}/>
               <OverallReturnBox option={{roi: 10, timeRange: 30}} eventKey='7' pollInterval={600000} url={itemUrl}/>
             </Row>
             <Row>
-              <CounterBoxPast60Days eventKey='12' pollInterval={600000} url={countUrl}/>
+              <CounterBoxPastNDays days={60} eventKey='12' pollInterval={600000} url={countUrl}/>
               <OverallReturnBox option={{roi: 0, timeRange: 60}} eventKey='9' pollInterval={600000} url={itemUrl}/>
               <OverallReturnBox option={{roi: 5, timeRange: 60}} eventKey='10' pollInterval={600000} url={itemUrl}/>
               <OverallReturnBox option={{roi: 10, timeRange: 60}} eventKey='11' pollInterval={600000} url={itemUrl}/>
@@ -343,7 +343,7 @@ var OverallReturnBox = React.createClass({
     setInterval(this.loadROIFromServer, this.props.pollInterval);
   },
   render: function() {
-    var header = 'Return | Conf. > ' + this.props.option.roi * 5 + '%'
+    var header = 'Return | Conf. >= ' + this.props.option.roi * 5 + '%'
     if (!!this.props.option.timeRange) {
       header += ' | Past ' + this.props.option.timeRange + ' days'
     }
@@ -381,11 +381,8 @@ var OverallReturnBox = React.createClass({
   }
 })
 
-var CounterBox = React.createClass({
-  loadTotalFromServer: function() {
-    var url = this.props.url
-    var query = this.props.query
-
+var CounterBoxMixin = {
+  loadTotalFromServer: function(url, query) {
     $.ajax({
       url: url,
       type: 'POST',
@@ -406,110 +403,89 @@ var CounterBox = React.createClass({
       counter: 0
     }
   },
-  componentDidMount: function() {
-    this.loadTotalFromServer();
-    setInterval(this.loadTotalFromServer, this.props.pollInterval);
-  },
-  render: function() {
+  generateComponent: function(header, eventKey) {
     return (
       <Col xs={6} md={3}>
-        <Panel header={this.props.header} eventKey={this.props.eventKey} bsStyle='info'>
+        <Panel header={header} eventKey={eventKey} bsStyle='info'>
           <h4>{this.state.counter}</h4>
         </Panel>
       </Col>
     )
   }
-})
+}
 
 var CounterBoxTotal = React.createClass({
+  mixins: [CounterBoxMixin],
+  getInitialState: function() {
+    return {
+      query: {},
+      header: 'Total Matches'
+    }
+  },
+  componentDidMount: function() {
+    this.loadTotalFromServer(this.props.url, this.state.query);
+    setInterval(this.loadTotalFromServer, this.props.pollInterval);
+  },
   render: function() {
-    var header = 'Total Matches'
-    var query = {}
     return (
-      <CounterBox query={query} header={header} eventKey={this.props.eventKey} pollInterval={this.props.pollInterval} url={this.props.url} />
+      this.generateComponent(this.state.header, this.props.eventKey)
     )
   }
 })
 
-var CounterBoxPastAll = React.createClass({
-  render: function() {
-    var header = 'All Past Matches'
+var CounterBoxPastNDays = React.createClass({
+  mixins: [CounterBoxMixin],
+  getInitialState: function() {
     var query = {
       '$and': [
         {'BetItem.Result': {'$exists': 'true'}},
         {'BetItem.Result': {'$ne': 'Unknown'}}
       ]
     }
+    var header = 'All Past Matches'
+    if (!!this.props.days && this.props.days > 0) {
+      query['$and'].push(
+        {'BetItem.MatchDate': {'$gte': daysAgo(this.props.days)}}
+      )
+      header = 'Matches in last ' + this.props.days + ' days'
+    }
+    return {
+      query: query,
+      header: header
+    }
+  },
+  componentDidMount: function() {
+    this.loadTotalFromServer(this.props.url, this.state.query);
+    setInterval(this.loadTotalFromServer, this.props.pollInterval);
+  },
+  render: function() {
     return (
-      <CounterBox query={query} header={header} eventKey={this.props.eventKey} pollInterval={this.props.pollInterval} url={this.props.url} />
+      this.generateComponent(this.state.header, this.props.eventKey)
     )
   }
 })
 
-var CounterBoxPast30Days = React.createClass({
-  render: function() {
-    var header = 'Matches in last 30 days'
-    var query = {
-      '$and': [
-        {'BetItem.Result': {'$exists': 'true'}},
-        {'BetItem.Result': {'$ne': 'Unknown'}},
-        {'BetItem.MatchDate': {'$gte': daysAgo(30)}}
-      ]
+var CounterBoxConfGreaterThanN = React.createClass({
+  mixins: [CounterBoxMixin],
+  getInitialState: function() {
+    var threshold = 0
+    if (!!this.props.threshold) {
+      threshold = this.props.threshold / 500
     }
-    return (
-      <CounterBox query={query} header={header} eventKey={this.props.eventKey} pollInterval={this.props.pollInterval} url={this.props.url} />
-    )
-  }
-})
-
-var CounterBoxPast60Days = React.createClass({
-  render: function() {
-    var header = 'Matches in last 60 days'
-    var query = {
-      '$and': [
-        {'BetItem.Result': {'$exists': 'true'}},
-        {'BetItem.Result': {'$ne': 'Unknown'}},
-        {'BetItem.MatchDate': {'$gte': daysAgo(60)}}
-      ]
+    return {
+      query: {
+        'ROI': {'$gte': threshold}
+      },
+      header: 'Matches with Conf. >= ' + threshold
     }
-    return (
-      <CounterBox query={query} header={header} eventKey={this.props.eventKey} pollInterval={this.props.pollInterval} url={this.props.url} />
-    )
-  }
-})
-
-var CounterBoxConfGreaterThan0 = React.createClass({
+  },
+  componentDidMount: function() {
+    this.loadTotalFromServer(this.props.url, this.state.query);
+    setInterval(this.loadTotalFromServer, this.props.pollInterval);
+  },
   render: function() {
-    var header = 'Matches with conf > 0'
-    var query = {
-      'ROI': {'$gt': 0}
-    }
     return (
-      <CounterBox query={query} header={header} eventKey={this.props.eventKey} pollInterval={this.props.pollInterval} url={this.props.url} />
-    )
-  }
-})
-
-var CounterBoxConfGreaterThan25 = React.createClass({
-  render: function() {
-    var header = 'Matches with conf > 25%'
-    var query = {
-      'ROI': {'$gt': 0.05}
-    }
-    return (
-      <CounterBox query={query} header={header} eventKey={this.props.eventKey} pollInterval={this.props.pollInterval} url={this.props.url} />
-    )
-  }
-})
-
-var CounterBoxConfGreaterThan50 = React.createClass({
-  render: function() {
-    var header = 'Matches with conf > 50%'
-    var query = {
-      'ROI': {'$gt': 0.1}
-    }
-    return (
-      <CounterBox query={query} header={header} eventKey={this.props.eventKey} pollInterval={this.props.pollInterval} url={this.props.url} />
+      this.generateComponent(this.state.header, this.props.eventKey)
     )
   }
 })
