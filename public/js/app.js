@@ -259,6 +259,9 @@ var StatisticsPage = React.createClass({
           <Grid>
             <Row>
               <CounterBoxTotal eventKey='13' pollInterval={600000} url={countUrl}/>
+              <CounterBoxConfGreaterThan0 eventKey='14' pollInterval={600000} url={countUrl}/>
+              <CounterBoxConfGreaterThan25 eventKey='15' pollInterval={600000} url={countUrl}/>
+              <CounterBoxConfGreaterThan50 eventKey='16' pollInterval={600000} url={countUrl}/>
             </Row>
             <Row>
               <CounterBoxPastAll eventKey='4' pollInterval={600000} url={countUrl}/>
@@ -468,6 +471,42 @@ var CounterBoxPast60Days = React.createClass({
         {'BetItem.Result': {'$ne': 'Unknown'}},
         {'BetItem.MatchDate': {'$gte': daysAgo(60)}}
       ]
+    }
+    return (
+      <CounterBox query={query} header={header} eventKey={this.props.eventKey} pollInterval={this.props.pollInterval} url={this.props.url} />
+    )
+  }
+})
+
+var CounterBoxConfGreaterThan0 = React.createClass({
+  render: function() {
+    var header = 'Matches with conf > 0'
+    var query = {
+      'ROI': {'$gt': 0}
+    }
+    return (
+      <CounterBox query={query} header={header} eventKey={this.props.eventKey} pollInterval={this.props.pollInterval} url={this.props.url} />
+    )
+  }
+})
+
+var CounterBoxConfGreaterThan25 = React.createClass({
+  render: function() {
+    var header = 'Matches with conf > 25%'
+    var query = {
+      'ROI': {'$gt': 0.05}
+    }
+    return (
+      <CounterBox query={query} header={header} eventKey={this.props.eventKey} pollInterval={this.props.pollInterval} url={this.props.url} />
+    )
+  }
+})
+
+var CounterBoxConfGreaterThan50 = React.createClass({
+  render: function() {
+    var header = 'Matches with conf > 50%'
+    var query = {
+      'ROI': {'$gt': 0.1}
     }
     return (
       <CounterBox query={query} header={header} eventKey={this.props.eventKey} pollInterval={this.props.pollInterval} url={this.props.url} />
