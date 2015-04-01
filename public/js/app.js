@@ -264,12 +264,6 @@ var StatisticsPage = React.createClass({
               <CounterBoxConfGreaterThanN threshold={50} eventKey='7' pollInterval={600000} url={countUrl}/>
             </Row>
             <Row>
-              <CounterBoxPastNDays eventKey='2' pollInterval={600000} url={countUrl}/>
-              <OverallReturnBox option={{roi: 0}} eventKey='8' pollInterval={600000} url={itemUrl}/>
-              <OverallReturnBox option={{roi: 5}} eventKey='9' pollInterval={600000} url={itemUrl}/>
-              <OverallReturnBox option={{roi: 10}} eventKey='10' pollInterval={600000} url={itemUrl}/>
-            </Row>
-            <Row>
               <CounterBoxPastNDays days={30} eventKey='3' pollInterval={600000} url={countUrl}/>
               <OverallReturnBox option={{roi: 0, timeRange: 30}} eventKey='11' pollInterval={600000} url={itemUrl}/>
               <OverallReturnBox option={{roi: 5, timeRange: 30}} eventKey='12' pollInterval={600000} url={itemUrl}/>
@@ -280,6 +274,12 @@ var StatisticsPage = React.createClass({
               <OverallReturnBox option={{roi: 0, timeRange: 60}} eventKey='14' pollInterval={600000} url={itemUrl}/>
               <OverallReturnBox option={{roi: 5, timeRange: 60}} eventKey='15' pollInterval={600000} url={itemUrl}/>
               <OverallReturnBox option={{roi: 10, timeRange: 60}} eventKey='16' pollInterval={600000} url={itemUrl}/>
+            </Row>
+            <Row>
+              <CounterBoxPastNDays eventKey='2' pollInterval={600000} url={countUrl}/>
+              <OverallReturnBox option={{roi: 0}} eventKey='8' pollInterval={600000} url={itemUrl}/>
+              <OverallReturnBox option={{roi: 5}} eventKey='9' pollInterval={600000} url={itemUrl}/>
+              <OverallReturnBox option={{roi: 10}} eventKey='10' pollInterval={600000} url={itemUrl}/>
             </Row>
           </Grid>
         </PanelGroup>
