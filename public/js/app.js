@@ -7,7 +7,7 @@ var Row = ReactBootstrap.Row
 var Col = ReactBootstrap.Col
 var Panel = ReactBootstrap.Panel
 var PanelGroup = ReactBootstrap.PanelGroup
-var Well = ReactBootstrap.Well
+var Label = ReactBootstrap.Label
 
 var Table = ReactBootstrap.Table
 var thead = ReactBootstrap.thead
@@ -258,6 +258,10 @@ var StatisticsPage = React.createClass({
         <PanelGroup>
           <Grid>
             <Row>
+              <h1 className='pageTitle'><Label>Facts and Returns</Label></h1>
+              <br/>
+            </Row>
+            <Row>
               <CounterBoxTotal eventKey='1' pollInterval={600000} url={countUrl}/>
               <CounterBoxConfGreaterThanN threshold={0} eventKey='5' pollInterval={600000} url={countUrl}/>
               <CounterBoxConfGreaterThanN threshold={25} eventKey='6' pollInterval={600000} url={countUrl}/>
@@ -403,6 +407,12 @@ var CounterBoxMixin = {
       counter: 0
     }
   },
+  componentDidMount: function() {
+    setTimeout(function(){
+      this.loadTotalFromServer(this.props.url, this.state.query);
+      setInterval(this.loadTotalFromServer, this.props.pollInterval);
+      }.bind(this), parseInt(this.props.eventKey) * 50)
+  },
   generateComponent: function(header, eventKey) {
     return (
       <Col xs={6} md={3}>
@@ -421,12 +431,6 @@ var CounterBoxTotal = React.createClass({
       query: {},
       header: 'Total Matches'
     }
-  },
-  componentDidMount: function() {
-    setTimeout(function(){
-      this.loadTotalFromServer(this.props.url, this.state.query);
-      setInterval(this.loadTotalFromServer, this.props.pollInterval);
-      }.bind(this), parseInt(this.props.eventKey) * 50)
   },
   render: function() {
     return (
@@ -456,12 +460,6 @@ var CounterBoxPastNDays = React.createClass({
       header: header
     }
   },
-  componentDidMount: function() {
-    setTimeout(function(){
-      this.loadTotalFromServer(this.props.url, this.state.query);
-      setInterval(this.loadTotalFromServer, this.props.pollInterval);
-      }.bind(this), parseInt(this.props.eventKey) * 50)
-  },
   render: function() {
     return (
       this.generateComponent(this.state.header, this.props.eventKey)
@@ -483,12 +481,6 @@ var CounterBoxConfGreaterThanN = React.createClass({
       header: 'Matches with Conf.>=' + this.props.threshold + '%'
     }
   },
-  componentDidMount: function() {
-    setTimeout(function(){
-      this.loadTotalFromServer(this.props.url, this.state.query);
-      setInterval(this.loadTotalFromServer, this.props.pollInterval);
-      }.bind(this), parseInt(this.props.eventKey) * 50)
-  },
   render: function() {
     return (
       this.generateComponent(this.state.header, this.props.eventKey)
@@ -497,6 +489,6 @@ var CounterBoxConfGreaterThanN = React.createClass({
 })
 
 React.render(
-  <SearchPage url='/'/>,
+  <StatisticsPage url='/'/>,
   document.getElementById('pageContainer')
 )

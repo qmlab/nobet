@@ -79,3 +79,8 @@ body {
   color: white;
   background-color: #003300;
 }
+
+.pageTitle {
+  margin-left: 15px;
+  text-align: center;
+}
