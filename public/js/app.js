@@ -423,8 +423,10 @@ var CounterBoxTotal = React.createClass({
     }
   },
   componentDidMount: function() {
-    setTimeout(function(){ this.loadTotalFromServer(this.props.url, this.state.query); }.bind(this), parseInt(this.props.eventKey) * 50)
-    setInterval(this.loadTotalFromServer, this.props.pollInterval);
+    setTimeout(function(){
+      this.loadTotalFromServer(this.props.url, this.state.query);
+      setInterval(this.loadTotalFromServer, this.props.pollInterval);
+      }.bind(this), parseInt(this.props.eventKey) * 50)
   },
   render: function() {
     return (
@@ -455,8 +457,10 @@ var CounterBoxPastNDays = React.createClass({
     }
   },
   componentDidMount: function() {
-    setTimeout(function(){ this.loadTotalFromServer(this.props.url, this.state.query); }.bind(this), parseInt(this.props.eventKey) * 50)
-    setInterval(this.loadTotalFromServer, this.props.pollInterval);
+    setTimeout(function(){
+      this.loadTotalFromServer(this.props.url, this.state.query);
+      setInterval(this.loadTotalFromServer, this.props.pollInterval);
+      }.bind(this), parseInt(this.props.eventKey) * 50)
   },
   render: function() {
     return (
@@ -480,8 +484,10 @@ var CounterBoxConfGreaterThanN = React.createClass({
     }
   },
   componentDidMount: function() {
-    setTimeout(function(){ this.loadTotalFromServer(this.props.url, this.state.query); }.bind(this), parseInt(this.props.eventKey) * 50)
-    setInterval(this.loadTotalFromServer, this.props.pollInterval);
+    setTimeout(function(){
+      this.loadTotalFromServer(this.props.url, this.state.query);
+      setInterval(this.loadTotalFromServer, this.props.pollInterval);
+      }.bind(this), parseInt(this.props.eventKey) * 50)
   },
   render: function() {
     return (
