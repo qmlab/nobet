@@ -476,7 +476,7 @@ var CounterBoxConfGreaterThanN = React.createClass({
       query: {
         'ROI': {'$gte': threshold}
       },
-      header: 'Matches with Conf.>=' + this.props.threshold
+      header: 'Matches with Conf.>=' + this.props.threshold + '%'
     }
   },
   componentDidMount: function() {
