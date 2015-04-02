@@ -8,6 +8,8 @@ var Col = ReactBootstrap.Col
 var Panel = ReactBootstrap.Panel
 var PanelGroup = ReactBootstrap.PanelGroup
 var Label = ReactBootstrap.Label
+var Tooltip = ReactBootstrap.Tooltip
+var OverlayTrigger = ReactBootstrap.OverlayTrigger
 
 var Table = ReactBootstrap.Table
 var thead = ReactBootstrap.thead
@@ -292,6 +294,17 @@ var StatisticsPage = React.createClass({
   }
 })
 
+var ContentWithTooltip = React.createClass({
+  render: function() {
+    var tip = <Tooltip>{this.props.tip}</Tooltip>
+    return (
+      <OverlayTrigger placement='top' overlay={tip} delayShow={300} delayHide={150}>
+        <div>{this.props.content}</div>
+      </OverlayTrigger>
+    )
+  }
+})
+
 var OverallReturnBox = React.createClass({
   loadROIFromServer: function() {
     var url = this.props.url
@@ -330,7 +343,10 @@ var OverallReturnBox = React.createClass({
         if (stakes.length > 0) {
           actualReturn = Math.round((actualReturn / stakes.length - 1) * 10000) / 100
         }
-        this.setState({ROI: actualReturn})
+        this.setState({
+          ROI: actualReturn,
+          lastUpdateAt: new Date()
+          })
       }.bind(this),
       error: function(xhr, status, err) {
         console.error(this.props.url, status, err.toString())
@@ -339,7 +355,8 @@ var OverallReturnBox = React.createClass({
   },
   getInitialState: function() {
     return {
-      ROI: 0
+      ROI: 0,
+      lastUpdateAt: new Date()
     }
   },
   componentDidMount: function() {
@@ -355,11 +372,12 @@ var OverallReturnBox = React.createClass({
       header += ' | Overall'
     }
     var roi = this.state.ROI + '%'
+    var confidenceContent = <h4>{roi}</h4>
     if (this.state.ROI < 0) {
       return (
         <Col xs={6} md={3}>
           <Panel header={header} eventKey={this.props.eventKey} bsStyle='danger'>
-            <h4>{roi}</h4>
+            <ContentWithTooltip tip={'Updated at: ' + this.state.lastUpdateAt.toLocaleTimeString()} content={confidenceContent} />
           </Panel>
         </Col>
       )
@@ -368,7 +386,7 @@ var OverallReturnBox = React.createClass({
       return (
         <Col xs={6} md={3}>
           <Panel header={header} eventKey={this.props.eventKey} bsStyle='warning'>
-            <h4>{roi}</h4>
+            <ContentWithTooltip tip={'Updated at: ' + this.state.lastUpdateAt.toLocaleTimeString()} content={confidenceContent} />
           </Panel>
         </Col>
       )
@@ -377,7 +395,7 @@ var OverallReturnBox = React.createClass({
       return (
         <Col xs={6} md={3}>
           <Panel header={header} eventKey={this.props.eventKey} bsStyle='success'>
-            <h4>{roi}</h4>
+            <ContentWithTooltip tip={'Updated at: ' + this.state.lastUpdateAt.toLocaleTimeString()} content={confidenceContent} />
           </Panel>
         </Col>
       )
@@ -394,7 +412,10 @@ var CounterBoxMixin = {
       dataType: 'json',
       success: function(count) {
         if (count.length > 0) {
-          this.setState({counter: count[0].value})
+          this.setState({
+            counter: count[0].value,
+            lastUpdateAt: new Date()
+            })
         }
       }.bind(this),
       error: function(xhr, status, err) {
@@ -404,7 +425,8 @@ var CounterBoxMixin = {
   },
   getInitialState: function() {
     return {
-      counter: 0
+      counter: 0,
+      lastUpdateAt: new Date()
     }
   },
   componentDidMount: function() {
@@ -414,10 +436,11 @@ var CounterBoxMixin = {
     }.bind(this), parseInt(this.props.eventKey) * 100)
   },
   generateComponent: function(header, eventKey) {
+    var counterContent = <h4>{this.state.counter}</h4>
     return (
       <Col xs={6} md={3}>
         <Panel header={header} eventKey={eventKey} bsStyle='info'>
-          <h4>{this.state.counter}</h4>
+          <ContentWithTooltip tip={'Updated at: ' + this.state.lastUpdateAt.toLocaleTimeString()} content={counterContent} />
         </Panel>
       </Col>
     )
