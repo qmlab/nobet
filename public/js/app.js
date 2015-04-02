@@ -419,7 +419,7 @@ var CounterBoxMixin = {
         }
       }.bind(this),
       error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString())
+        console.error(url, status, err.toString())
       }.bind(this)
     })
   },
@@ -432,7 +432,7 @@ var CounterBoxMixin = {
   componentDidMount: function() {
     setTimeout(function(){
       this.loadTotalFromServer(this.props.url, this.state.query);
-      setInterval(this.loadTotalFromServer, this.props.pollInterval);
+      setInterval(function() { this.loadTotalFromServer(this.props.url, this.state.query) }.bind(this), this.props.pollInterval);
     }.bind(this), parseInt(this.props.eventKey) * 100)
   },
   generateComponent: function(header, eventKey) {
