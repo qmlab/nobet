@@ -344,7 +344,7 @@ var OverallReturnBox = React.createClass({
   },
   componentDidMount: function() {
     this.loadROIFromServer();
-    setInterval(this.loadROIFromServer, this.props.pollInterval);
+    setInterval(this.loadROIFromServer.bind(this), this.props.pollInterval);
   },
   render: function() {
     var header = 'Return | Conf.>=' + this.props.option.roi * 5 + '%'
@@ -410,7 +410,7 @@ var CounterBoxMixin = {
   componentDidMount: function() {
     setTimeout(function(){
       this.loadTotalFromServer(this.props.url, this.state.query);
-      setInterval(this.loadTotalFromServer, this.props.pollInterval);
+      setInterval(this.loadTotalFromServer.bind(this), this.props.pollInterval);
       }.bind(this), parseInt(this.props.eventKey) * 50)
   },
   generateComponent: function(header, eventKey) {
