@@ -411,7 +411,7 @@ var CounterBoxMixin = {
     setTimeout(function(){
       this.loadTotalFromServer(this.props.url, this.state.query);
       setInterval(this.loadTotalFromServer, this.props.pollInterval);
-      }.bind(this), parseInt(this.props.eventKey) * 50)
+    }.bind(this), parseInt(this.props.eventKey) * 100)
   },
   generateComponent: function(header, eventKey) {
     return (
