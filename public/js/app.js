@@ -433,7 +433,7 @@ var CounterBoxMixin = {
     setTimeout(function(){
       this.loadTotalFromServer(this.props.url, this.state.query);
       setInterval(function() { this.loadTotalFromServer(this.props.url, this.state.query) }.bind(this), this.props.pollInterval);
-    }.bind(this), parseInt(this.props.eventKey) * 100)
+    }.bind(this), parseInt(this.props.eventKey) * 200)
   },
   generateComponent: function(header, eventKey) {
     var counterContent = <h4>{this.state.counter}</h4>
