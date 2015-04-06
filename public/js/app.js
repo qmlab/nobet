@@ -413,7 +413,7 @@ var CounterBoxMixin = {
       success: function(count) {
         if (count.length > 0) {
           this.setState({
-            counter: count[0].value,
+            counter: count.value,
             lastUpdateAt: new Date()
             })
         }
