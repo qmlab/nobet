@@ -411,7 +411,7 @@ var CounterBoxMixin = {
       data: JSON.stringify(query),
       dataType: 'json',
       success: function(count) {
-        if (count.length > 0) {
+        if (!!count.value) {
           this.setState({
             counter: count.value,
             lastUpdateAt: new Date()
