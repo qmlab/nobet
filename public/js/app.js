@@ -264,28 +264,46 @@ var StatisticsPage = React.createClass({
               <br/>
             </Row>
             <Row>
-              <CounterBoxTotal eventKey='1' pollInterval={600000} url={countUrl}/>
-              <CounterBoxConfGreaterThanN threshold={0} eventKey='14' pollInterval={600000} url={countUrl}/>
-              <CounterBoxConfGreaterThanN threshold={25} eventKey='15' pollInterval={600000} url={countUrl}/>
-              <CounterBoxConfGreaterThanN threshold={50} eventKey='16' pollInterval={600000} url={countUrl}/>
+              <CounterBoxSelected option={{}} eventKey='1' pollInterval={600000} url={countUrl}/>
+              <CounterBoxSelected option={{roi: 0}} eventKey='2' pollInterval={600000} url={countUrl}/>
+              <CounterBoxSelected option={{roi: 5}} eventKey='3' pollInterval={600000} url={countUrl}/>
+              <CounterBoxSelected option={{roi: 10}} eventKey='4' pollInterval={600000} url={countUrl}/>
             </Row>
             <Row>
-              <CounterBoxPastNDays days={30} eventKey='4' pollInterval={600000} url={countUrl}/>
-              <OverallReturnBox option={{roi: 0, timeRange: 30}} eventKey='2' pollInterval={600000} url={itemUrl}/>
-              <OverallReturnBox option={{roi: 5, timeRange: 30}} eventKey='3' pollInterval={600000} url={itemUrl}/>
-              <OverallReturnBox option={{roi: 10, timeRange: 30}} eventKey='5' pollInterval={600000} url={itemUrl}/>
+              <CounterBoxSelected option={{days: 30}} eventKey='5' pollInterval={600000} url={countUrl}/>
+              <CounterBoxSelected option={{roi: 0, days: 30}} eventKey='6' pollInterval={600000} url={countUrl}/>
+              <CounterBoxSelected option={{roi: 5, days: 30}} eventKey='7' pollInterval={600000} url={countUrl}/>
+              <CounterBoxSelected option={{roi: 10, days: 30}} eventKey='8' pollInterval={600000} url={countUrl}/>
             </Row>
             <Row>
-              <CounterBoxPastNDays days={60} eventKey='7' pollInterval={600000} url={countUrl}/>
-              <OverallReturnBox option={{roi: 0, timeRange: 60}} eventKey='6' pollInterval={600000} url={itemUrl}/>
-              <OverallReturnBox option={{roi: 5, timeRange: 60}} eventKey='8' pollInterval={600000} url={itemUrl}/>
-              <OverallReturnBox option={{roi: 10, timeRange: 60}} eventKey='9' pollInterval={600000} url={itemUrl}/>
+              <ReturnBox option={{roi: -30, days: 30}} eventKey='9' pollInterval={600000} url={itemUrl}/>
+              <ReturnBox option={{roi: 0, days: 30}} eventKey='10' pollInterval={600000} url={itemUrl}/>
+              <ReturnBox option={{roi: 5, days: 30}} eventKey='11' pollInterval={600000} url={itemUrl}/>
+              <ReturnBox option={{roi: 10, days: 30}} eventKey='12' pollInterval={600000} url={itemUrl}/>
             </Row>
             <Row>
-              <CounterBoxPastNDays eventKey='10' pollInterval={600000} url={countUrl}/>
-              <OverallReturnBox option={{roi: 0}} eventKey='11' pollInterval={600000} url={itemUrl}/>
-              <OverallReturnBox option={{roi: 5}} eventKey='12' pollInterval={600000} url={itemUrl}/>
-              <OverallReturnBox option={{roi: 10}} eventKey='13' pollInterval={600000} url={itemUrl}/>
+              <CounterBoxSelected option={{days: 60}} eventKey='13' pollInterval={600000} url={countUrl}/>
+              <CounterBoxSelected option={{roi: 0, days: 60}} eventKey='14' pollInterval={600000} url={countUrl}/>
+              <CounterBoxSelected option={{roi: 5, days: 60}} eventKey='15' pollInterval={600000} url={countUrl}/>
+              <CounterBoxSelected option={{roi: 10, days: 60}} eventKey='16' pollInterval={600000} url={countUrl}/>
+            </Row>
+            <Row>
+              <ReturnBox option={{roi: -30, days: 60}} eventKey='17' pollInterval={600000} url={itemUrl}/>
+              <ReturnBox option={{roi: 0, days: 60}} eventKey='18' pollInterval={600000} url={itemUrl}/>
+              <ReturnBox option={{roi: 5, days: 60}} eventKey='19' pollInterval={600000} url={itemUrl}/>
+              <ReturnBox option={{roi: 10, days: 60}} eventKey='20' pollInterval={600000} url={itemUrl}/>
+            </Row>
+            <Row>
+              <CounterBoxSelected option={{days: 365}} eventKey='21' pollInterval={600000} url={countUrl}/>
+              <CounterBoxSelected option={{roi: 0, days: 365}} eventKey='22' pollInterval={600000} url={countUrl}/>
+              <CounterBoxSelected option={{roi: 5, days: 365}} eventKey='23' pollInterval={600000} url={countUrl}/>
+              <CounterBoxSelected option={{roi: 10, days: 365}} eventKey='24' pollInterval={600000} url={countUrl}/>
+            </Row>
+            <Row>
+              <ReturnBox option={{roi: -30, days: 365}} eventKey='25' pollInterval={600000} url={itemUrl}/>
+              <ReturnBox option={{roi: 0, days: 365}} eventKey='26' pollInterval={600000} url={itemUrl}/>
+              <ReturnBox option={{roi: 5, days: 365}} eventKey='27' pollInterval={600000} url={itemUrl}/>
+              <ReturnBox option={{roi: 10, days: 365}} eventKey='28' pollInterval={600000} url={itemUrl}/>
             </Row>
           </Grid>
         </PanelGroup>
@@ -305,18 +323,22 @@ var ContentWithTooltip = React.createClass({
   }
 })
 
-var OverallReturnBox = React.createClass({
+var ReturnBox = React.createClass({
   loadROIFromServer: function() {
     var url = this.props.url
     var query = {
       '$and': [
         {'BetItem.Result': {'$exists': 'true'}},
-        {'BetItem.Result': {'$ne': 'Unknown'}},
-        {'ROI': {'$gte': this.props.option.roi / 100}}
+        {'BetItem.Result': {'$ne': 'Unknown'}}
       ]
     }
-    if (!!this.props.option.timeRange) {
-      var afterDate = daysAgo(this.props.option.timeRange)
+    if (!!this.props.option.roi || this.props.option.roi === 0) {
+      query['$and'].push({
+        'ROI': {'$gte': this.props.option.roi / 100}
+      })
+    }
+    if (!!this.props.option.days || this.props.option.days === 0) {
+      var afterDate = daysAgo(this.props.option.days)
       query['$and'].push({'BetItem.MatchDate': {'$gte': afterDate}})
     }
 
@@ -364,9 +386,9 @@ var OverallReturnBox = React.createClass({
     setInterval(this.loadROIFromServer, this.props.pollInterval);
   },
   render: function() {
-    var header = 'Return | Conf.>=' + this.props.option.roi * 5 + '%'
-    if (!!this.props.option.timeRange) {
-      header += ' | Past ' + this.props.option.timeRange + ' days'
+    var header = this.props.option.roi >= 0 ? 'Return | ' + this.props.option.roi * 5 + '%' : 'Return | All bets'
+    if (!!this.props.option.days || this.props.option.days === 0) {
+      header += ' | ' + this.props.option.days + ' days'
     }
     else {
       header += ' | Overall'
@@ -411,7 +433,7 @@ var CounterBoxMixin = {
       data: JSON.stringify(query),
       dataType: 'json',
       success: function(count) {
-        if (!!count.value) {
+        if (!!count.value || count.value === 0) {
           this.setState({
             counter: count.value,
             lastUpdateAt: new Date()
@@ -445,61 +467,32 @@ var CounterBoxMixin = {
   }
 }
 
-var CounterBoxTotal = React.createClass({
-  mixins: [CounterBoxMixin],
-  getInitialState: function() {
-    return {
-      query: {},
-      header: 'Total Matches'
-    }
-  },
-  render: function() {
-    return (
-      this.generateComponent(this.state.header, this.props.eventKey)
-    )
-  }
-})
-
-var CounterBoxPastNDays = React.createClass({
+var CounterBoxSelected = React.createClass({
   mixins: [CounterBoxMixin],
   getInitialState: function() {
     var query = {
       '$and': [
-        {'BetItem.Result': {'$exists': 'true'}},
-        {'BetItem.Result': {'$ne': 'Unknown'}}
+        {'BetItem': {'$exists': 'true'}}
       ]
     }
-    var header = 'All Past Matches'
-    if (!!this.props.days && this.props.days > 0) {
+    var header = 'Matches'
+    if (!!this.props.option.roi || this.props.option.roi === 0) {
       query['$and'].push(
-        {'BetItem.MatchDate': {'$gte': daysAgo(this.props.days)}}
+        {'ROI': {'$gte': this.props.option.roi / 100}}
       )
-      header = 'Matches in last ' + this.props.days + ' days'
+      header += ' | ' + this.props.option.roi * 5 +'%'
+    }
+    if (!!this.props.option.days && this.props.option.days > 0) {
+      query['$and'].push(
+        {'BetItem.Result': {'$exists': 'true'}},
+        {'BetItem.Result': {'$ne': 'Unknown'}},
+        {'BetItem.MatchDate': {'$gte': daysAgo(this.props.option.days)}}
+      )
+      header += ' | ' + this.props.option.days + ' days'
     }
     return {
       query: query,
       header: header
-    }
-  },
-  render: function() {
-    return (
-      this.generateComponent(this.state.header, this.props.eventKey)
-    )
-  }
-})
-
-var CounterBoxConfGreaterThanN = React.createClass({
-  mixins: [CounterBoxMixin],
-  getInitialState: function() {
-    var threshold = 0
-    if (!!this.props.threshold) {
-      threshold = this.props.threshold / 500
-    }
-    return {
-      query: {
-        'ROI': {'$gte': threshold}
-      },
-      header: 'Matches with Conf.>=' + this.props.threshold + '%'
     }
   },
   render: function() {
