@@ -1,6 +1,6 @@
 // Setup basic express server
 var express = require('express')
-, app = express()
+, nobet = express()
 , path = require('path')
 , fs = require('fs')
 , nconf = require('nconf')
@@ -9,13 +9,12 @@ var express = require('express')
 , https = require('https')
 , bodyParser = require('body-parser')
 , timespan = require('timespan')
-, util = require('./lib/util.js')
 
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+nobet.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
-app.use(bodyParser.json())
+nobet.use(bodyParser.json())
 
 // First consider commandline arguments and environment variables, respectively.
 nconf.argv().env();
@@ -40,15 +39,15 @@ else {
 var port = nconf.get('port')
 
 // For rendering views
-app.set('views', __dirname + '/public')
-app.engine('html', require('jade').__express);
-app.set('view engine', 'jade');
+nobet.set('views', __dirname + '/public')
+nobet.engine('html', require('jade').__express);
+nobet.set('view engine', 'jade');
 
 // For static html
-app.use(express.static(path.join(__dirname, 'public')));
+nobet.use(express.static(path.join(__dirname, 'public')));
 
 // Routing
-app.get('/', function(req, res) {
+nobet.get('/', function(req, res) {
   res.render('index.jade')
 })
 
@@ -57,7 +56,7 @@ var totalCache = {}
 
 // Proxy
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
-app.route('/records')
+nobet.route('/records')
 .post(function(req, res, next) {
   var username = nconf.get('apikey')
   var password = nconf.get('password')
@@ -124,7 +123,7 @@ app.route('/records')
   }
 })
 
-app.route('/total')
+nobet.route('/total')
 .post(function(req, res, next) {
   var username = nconf.get('apikey')
   var password = nconf.get('password')
@@ -184,7 +183,7 @@ app.route('/total')
 }
 })
 
-server = http.createServer(app)
+server = http.createServer(nobet)
 server.listen(port, function() {
   console.log('Debug: server listening at port %d', port)
 })
