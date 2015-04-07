@@ -8,6 +8,7 @@ var express = require('express')
 , http = require('http')
 , https = require('https')
 , bodyParser = require('body-parser')
+, timespan = require('timespan')
 , util = require('./lib/util.js')
 
 // parse application/x-www-form-urlencoded
@@ -51,6 +52,8 @@ app.get('/', function(req, res) {
   res.render('index.jade')
 })
 
+var cache = {}
+
 // Proxy
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 app.route('/records')
@@ -79,29 +82,44 @@ app.route('/records')
     }
   }
 
-  var _req = https.request(options, function(_res) {
-    _res.setEncoding('utf8')
-    _res.on('data', function(data) {
-      res.write(data)
-      next()
-    })
-    _res.on('close', function() {
-      res.status(_res.statusCode).end()
-    })
-    _res.on('end', function() {
-      res.status(_res.statusCode).end()
-    })
-  }).on('error', function(e) {
-    res.writeHead(500)
-    console.error(e.message)
-    res.end()
-  })
-
   var query = Object.keys(req.body)[0]
-  if (typeof query !== 'undefined') {
-    _req.write(query)
+  var now = new Date()
+  if (!!cache[query] && timespan.fromDates(cache[query].time, now).minutes < 10) {
+    res.write(cache[query].data)
+    res.status(200).end()
   }
-  _req.end()
+  else {
+    cache[query] = {
+      data: '',
+      time: now
+    }
+    var _req = https.request(options, function(_res) {
+      _res.setEncoding('utf8')
+      _res.on('data', function(data) {
+        cache[query] = {
+          data: cache[query].data + data,
+          time: now
+        }
+        res.write(data)
+        next()
+      })
+      _res.on('close', function() {
+        res.status(_res.statusCode).end()
+      })
+      _res.on('end', function() {
+        res.status(_res.statusCode).end()
+      })
+    }).on('error', function(e) {
+      res.writeHead(500)
+      console.error(e.message)
+      res.end()
+    })
+
+    if (typeof query !== 'undefined') {
+      _req.write(query)
+    }
+    _req.end()
+  }
 })
 
 app.route('/total')
